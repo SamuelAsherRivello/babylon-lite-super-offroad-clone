@@ -1,0 +1,40 @@
+{
+  "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/",
+  "version": "0.0.3",
+  "assets": [
+    {
+      "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/assets/truck-3.glb",
+      "status": 200
+    },
+    {
+      "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/assets/truck-1.glb",
+      "status": 200
+    },
+    {
+      "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/assets/nitro.glb",
+      "status": 200
+    },
+    {
+      "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/assets/truck-2.glb",
+      "status": 200
+    },
+    {
+      "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/assets/truck-4.glb",
+      "status": 200
+    },
+    {
+      "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/assets/course.glb",
+      "status": 200
+    },
+    {
+      "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/assets/traction.glb",
+      "status": 200
+    },
+    {
+      "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/assets/wheel.glb",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "time": "2026-09-30T13:29:44.080Z"
+}

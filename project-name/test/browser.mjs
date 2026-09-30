@@ -5,7 +5,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 const url =
   process.env.GAME_URL ||
   "http://127.0.0.1:5188/babylon-lite-super-offroad-clone/";
-const evidence = new URL("../documentation/", import.meta.url);
+const evidence = new URL("../documentation/", import.meta.url),
+  prefix=process.env.EVIDENCE_PREFIX || '';
 await mkdir(evidence, { recursive: true });
 const browser = await chromium.launch({
   channel: "chrome",
@@ -30,6 +31,7 @@ async function open() {
   );
   assert.equal(await page.evaluate(() => gameDiagnostics.fatal), "");
   assert.equal(await page.evaluate(() => gameDiagnostics.graybox), false);
+  if(process.env.EXPECTED_VERSION)assert.equal(await page.locator('.bottom-right b').textContent(),'v'+process.env.EXPECTED_VERSION);
   return page;
 }
 async function state(page) {
@@ -146,7 +148,7 @@ try {
   report.checks.push({ solo: await race([solo]) });
   assert.deepEqual(await solo.evaluate(() => gameDiagnostics.camera), camera);
   await solo.screenshot({
-    path: new URL("solo-results.png", evidence).pathname.slice(1),
+    path: new URL(prefix+"solo-results.png", evidence).pathname.slice(1),
   });
   await solo.waitForFunction(() => gameDiagnostics.state.phase === "waiting", {
     timeout: 12000,
@@ -182,7 +184,7 @@ try {
   await a.waitForFunction(() => gameDiagnostics.state.phase === "racing");
   report.checks.push({ online: await race([a, b]) });
   await a.screenshot({
-    path: new URL("online-results.png", evidence).pathname.slice(1),
+    path: new URL(prefix+"online-results.png", evidence).pathname.slice(1),
   });
   for (const p of [a, b]) await p.context().close();
   const mobile = await browser.newContext({
@@ -223,7 +225,7 @@ try {
   });
   assert.equal(await p.evaluate(() => gameDiagnostics.input.throttle), 0);
   await p.screenshot({
-    path: new URL("mobile.png", evidence).pathname.slice(1),
+    path: new URL(prefix+"mobile.png", evidence).pathname.slice(1),
   });
   await p.setViewportSize({ width: 844, height: 390 });
   assert(
@@ -235,7 +237,7 @@ try {
     ) < 0.02,
   );
   await p.screenshot({
-    path: new URL("landscape-mobile.png", evidence).pathname.slice(1),
+    path: new URL(prefix+"landscape-mobile.png", evidence).pathname.slice(1),
   });
   await mobile.close();
   report.checks.push(
@@ -245,7 +247,7 @@ try {
   report.errors = errors;
   report.finished = new Date().toISOString();
   await writeFile(
-    new URL("browser-verification.json", evidence),
+    new URL(prefix+"browser-verification.json", evidence),
     JSON.stringify(report, null, 2),
   );
   console.log(JSON.stringify(report, null, 2));
@@ -253,7 +255,7 @@ try {
   report.failure = e.stack;
   report.errors = errors;
   await writeFile(
-    new URL("browser-verification.json", evidence),
+    new URL(prefix+"browser-verification.json", evidence),
     JSON.stringify(report, null, 2),
   );
   throw e;

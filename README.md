@@ -4,7 +4,13 @@
 
 An original four-truck browser arcade racer with a fixed 16:9 landscape camera, solo practice, shared-screen racing, and online racing on the released shared server.
 
-Original Blender artwork is integrated. Public release verification is in progress.
+Original Blender artwork is integrated. Requires Chrome or Edge with WebGPU and hardware acceleration.
+
+## Live Demo
+
+[**Play Dust Circuit Rally**](https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/) — solo practice, local 2–4 players, or online racing with up to four humans.
+
+[Game release v0.0.3](https://github.com/SamuelAsherRivello/babylon-lite-super-offroad-clone/releases/tag/v0.0.3). The public page and all eight runtime GLBs loaded successfully, and the displayed version matches the release. Full public multiplayer verification is in progress.
 
 ## Preview
 
@@ -70,7 +76,7 @@ npm test checks independent keyboard/gamepad mappings and the released offline r
 
 The shared backend was released and live-verified as [v0.6.0](https://github.com/SamuelAsherRivello/rmc-colyseus-multiplayer-server/releases/tag/v0.6.0), including all 23 regression tests. [Release/deployment run](https://github.com/SamuelAsherRivello/rmc-colyseus-multiplayer-server/actions/runs/36695393931). The exact client artifact is pinned in package.json and package-lock.json.
 
-Game release uses the checked-in Release workflow: install, tests, reviewed-asset check, build, patch version bump, commit, tag, GitHub release. Pages uses the deploy-pages workflow on main or explicit dispatch. After release, dispatch Pages if the bot version commit did not trigger it; verify actual public gameplay/assets/version before announcing a playable URL. The current game has not been released.
+Game release uses the checked-in Release workflow: install, tests, reviewed-asset check, build, patch version bump, commit, tag, GitHub release. Pages uses the deploy-pages workflow on main or explicit dispatch. After release, dispatch Pages if the bot version commit did not trigger it. [Release run](https://github.com/SamuelAsherRivello/babylon-lite-super-offroad-clone/actions/runs/36721392105) and [v0.0.3 deployment](https://github.com/SamuelAsherRivello/babylon-lite-super-offroad-clone/actions/runs/36721641521) succeeded. Public asset/version evidence is recorded in project-name/documentation/public-assets-verification.json.
 
 ## Source Revisions
 

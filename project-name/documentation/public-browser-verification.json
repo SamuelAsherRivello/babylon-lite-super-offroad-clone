@@ -1,0 +1,136 @@
+{
+  "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/",
+  "started": "2026-09-30T13:38:14.421Z",
+  "checks": [
+    {
+      "solo": {
+        "time": 60.033333333332486,
+        "trucks": [
+          {
+            "number": 1,
+            "bot": false,
+            "laps": 3,
+            "finish": 50.59999999999969
+          },
+          {
+            "number": 2,
+            "bot": true,
+            "laps": 3,
+            "finish": 58.93333333333255
+          },
+          {
+            "number": 3,
+            "bot": true,
+            "laps": 3,
+            "finish": 60.033333333332486
+          },
+          {
+            "number": 4,
+            "bot": true,
+            "laps": 3,
+            "finish": 59.86666666666583
+          }
+        ],
+        "ranking": [
+          "local-1",
+          "ai-1-2",
+          "ai-1-4",
+          "ai-1-3"
+        ],
+        "fps": {
+          "min": 26.690391459059988,
+          "max": 60.07484735083077,
+          "average": 49.897542878009524
+        }
+      }
+    },
+    {
+      "local": {
+        "time": 60.33333333333247,
+        "trucks": [
+          {
+            "number": 1,
+            "bot": false,
+            "laps": 3,
+            "finish": 50.13333333333305
+          },
+          {
+            "number": 2,
+            "bot": false,
+            "laps": 3,
+            "finish": 55.93333333333272
+          },
+          {
+            "number": 3,
+            "bot": true,
+            "laps": 3,
+            "finish": 60.33333333333247
+          },
+          {
+            "number": 4,
+            "bot": true,
+            "laps": 3,
+            "finish": 58.6666666666659
+          }
+        ],
+        "ranking": [
+          "local-1",
+          "local-2",
+          "ai-1-4",
+          "ai-1-3"
+        ],
+        "fps": {
+          "min": 41.43237644272693,
+          "max": 59.20078934385792,
+          "average": 54.045267850867084
+        }
+      }
+    },
+    {
+      "online": {
+        "time": 69.7999999999986,
+        "trucks": [
+          {
+            "number": 1,
+            "bot": false,
+            "laps": 2,
+            "finish": null
+          },
+          {
+            "number": 2,
+            "bot": false,
+            "laps": 2,
+            "finish": null
+          },
+          {
+            "number": 3,
+            "bot": true,
+            "laps": 3,
+            "finish": 59.533333333332514
+          },
+          {
+            "number": 4,
+            "bot": true,
+            "laps": 3,
+            "finish": 54.76666666666612
+          }
+        ],
+        "ranking": [
+          "ai-1-4",
+          "ai-1-3",
+          "GKU0S41w0",
+          "hnmrh6a3h"
+        ],
+        "fps": {
+          "min": 16.638935108150044,
+          "max": 32.98729019112628,
+          "average": 22.806320427750965
+        }
+      }
+    },
+    "concurrent emulated touch, cancellation, responsive 16:9, static camera, focus release, pause/replay"
+  ],
+  "requestFailures": [],
+  "errors": [],
+  "finished": "2026-09-30T13:42:00.961Z"
+}

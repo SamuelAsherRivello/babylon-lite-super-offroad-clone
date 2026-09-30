@@ -6,7 +6,7 @@ const url =
   process.env.GAME_URL ||
   "http://127.0.0.1:5188/babylon-lite-super-offroad-clone/";
 const evidence = new URL("../documentation/", import.meta.url),
-  prefix=process.env.EVIDENCE_PREFIX || '';
+  prefix = process.env.EVIDENCE_PREFIX || "";
 await mkdir(evidence, { recursive: true });
 const browser = await chromium.launch({
   channel: "chrome",
@@ -18,20 +18,35 @@ const browser = await chromium.launch({
   ],
 });
 const errors = [],
-  report = { url, started: new Date().toISOString(), checks: [] };
+  report = {
+    url,
+    started: new Date().toISOString(),
+    checks: [],
+    requestFailures: [],
+  };
 async function open() {
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
   });
   const page = await context.newPage();
   page.on("pageerror", (e) => errors.push(e.message));
+  page.on("requestfailed", (r) =>
+    report.requestFailures.push({
+      url: r.url(),
+      error: r.failure()?.errorText,
+    }),
+  );
   await page.goto(url);
   await page.waitForFunction(
     () => window.gameDiagnostics?.ready || window.gameDiagnostics?.fatal,
   );
   assert.equal(await page.evaluate(() => gameDiagnostics.fatal), "");
   assert.equal(await page.evaluate(() => gameDiagnostics.graybox), false);
-  if(process.env.EXPECTED_VERSION)assert.equal(await page.locator('.bottom-right b').textContent(),'v'+process.env.EXPECTED_VERSION);
+  if (process.env.EXPECTED_VERSION)
+    assert.equal(
+      await page.locator(".bottom-right b").textContent(),
+      "v" + process.env.EXPECTED_VERSION,
+    );
   return page;
 }
 async function state(page) {
@@ -65,18 +80,12 @@ async function race(pages, local = false) {
         continue;
       }
       if (s?.phase !== "racing") continue;
+      const ownId = await page.evaluate(
+        () => gameDiagnostics.session?.sessionId || "local-1",
+      );
       const own = s.trucks
         .filter((t) => !t.bot)
-        .filter(
-          (t) =>
-            local ||
-            t.id ===
-              s.people.find(
-                (p) =>
-                  p.id ===
-                  (page === pages[0] ? s.people[0]?.id : s.people[1]?.id),
-              )?.id,
-        );
+        .filter((t) => local || t.id === ownId);
       for (let i = 0; i < own.length; i++) {
         const t = own[i],
           c = aiInput(t),
@@ -148,7 +157,7 @@ try {
   report.checks.push({ solo: await race([solo]) });
   assert.deepEqual(await solo.evaluate(() => gameDiagnostics.camera), camera);
   await solo.screenshot({
-    path: new URL(prefix+"solo-results.png", evidence).pathname.slice(1),
+    path: new URL(prefix + "solo-results.png", evidence).pathname.slice(1),
   });
   await solo.waitForFunction(() => gameDiagnostics.state.phase === "waiting", {
     timeout: 12000,
@@ -179,12 +188,15 @@ try {
   await a.waitForFunction(() => gameDiagnostics.state.people.length === 2);
   await a.click("#ready");
   await b.click("#ready");
-  await a.waitForFunction(() => !document.querySelector("#start").disabled);
-  await a.click("#start");
+  const starter = (await a.locator("#start").isVisible()) ? a : b;
+  await starter.waitForFunction(
+    () => !document.querySelector("#start").disabled,
+  );
+  await starter.click("#start");
   await a.waitForFunction(() => gameDiagnostics.state.phase === "racing");
   report.checks.push({ online: await race([a, b]) });
   await a.screenshot({
-    path: new URL(prefix+"online-results.png", evidence).pathname.slice(1),
+    path: new URL(prefix + "online-results.png", evidence).pathname.slice(1),
   });
   for (const p of [a, b]) await p.context().close();
   const mobile = await browser.newContext({
@@ -225,7 +237,7 @@ try {
   });
   assert.equal(await p.evaluate(() => gameDiagnostics.input.throttle), 0);
   await p.screenshot({
-    path: new URL(prefix+"mobile.png", evidence).pathname.slice(1),
+    path: new URL(prefix + "mobile.png", evidence).pathname.slice(1),
   });
   await p.setViewportSize({ width: 844, height: 390 });
   assert(
@@ -237,7 +249,7 @@ try {
     ) < 0.02,
   );
   await p.screenshot({
-    path: new URL(prefix+"landscape-mobile.png", evidence).pathname.slice(1),
+    path: new URL(prefix + "landscape-mobile.png", evidence).pathname.slice(1),
   });
   await mobile.close();
   report.checks.push(
@@ -247,7 +259,7 @@ try {
   report.errors = errors;
   report.finished = new Date().toISOString();
   await writeFile(
-    new URL(prefix+"browser-verification.json", evidence),
+    new URL(prefix + "browser-verification.json", evidence),
     JSON.stringify(report, null, 2),
   );
   console.log(JSON.stringify(report, null, 2));
@@ -255,7 +267,7 @@ try {
   report.failure = e.stack;
   report.errors = errors;
   await writeFile(
-    new URL(prefix+"browser-verification.json", evidence),
+    new URL(prefix + "browser-verification.json", evidence),
     JSON.stringify(report, null, 2),
   );
   throw e;

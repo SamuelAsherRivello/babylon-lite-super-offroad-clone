@@ -10,7 +10,7 @@ Original Blender artwork is integrated. Requires Chrome or Edge with WebGPU and 
 
 [**Play Dust Circuit Rally**](https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/) — solo practice, local 2–4 players, or online racing with up to four humans.
 
-[Game release v0.0.3](https://github.com/SamuelAsherRivello/babylon-lite-super-offroad-clone/releases/tag/v0.0.3). The public page and all eight runtime GLBs loaded successfully, and the displayed version matches the release. Full public multiplayer verification is in progress.
+[Game release v0.0.3](https://github.com/SamuelAsherRivello/babylon-lite-super-offroad-clone/releases/tag/v0.0.3). The public page, all eight runtime GLBs, solo/local races, two-browser online results, replay and landscape touch controls passed verification. The displayed version matches the release.
 
 ## Preview
 
@@ -60,7 +60,7 @@ Online admission uses dust-circuit-rally on the shared server. Up to four humans
 - Fixed orthographic camera, whole-course landscape view; narrow layouts preserve 16:9.
 - project-name/ deliberately remains the app root as required by generated AGENTS.md. Repository root is the npm root.
 - Four template corner roles retained: title, links, settings, version. version.txt is the version source.
-- Client OpenSpec change build-dust-circuit-rally remains active until Blender and public delivery acceptance passes.
+- Accepted arcade-racing specification is in openspec/specs/arcade-racing/; completed change is archived as 2026-09-30-build-dust-circuit-rally.
 
 ## Assets
 
@@ -75,6 +75,8 @@ Original geometry was authored through the configured official Blender MCP in a 
 npm test checks independent keyboard/gamepad mappings and the released offline race loop. project-name/test/browser.mjs drives complete solo, local and online races through keyboard input and captures actual game evidence. project-name/test/browser-input-network.mjs checks concurrent touch and a native WebSocket delay/drop/reconnect simulation. [Delivery status](project-name/documentation/delivery-status.md) records exact results and hardware limitations. `node project-name/test/assets.mjs` requires reviewed real GLB assets before release or Pages deployment.
 
 The shared backend was released and live-verified as [v0.6.0](https://github.com/SamuelAsherRivello/rmc-colyseus-multiplayer-server/releases/tag/v0.6.0), including all 23 regression tests. [Release/deployment run](https://github.com/SamuelAsherRivello/rmc-colyseus-multiplayer-server/actions/runs/36695393931). The exact client artifact is pinned in package.json and package-lock.json.
+
+Public verification on 2026-09-30 ran against the server's newer v0.7.0 deployment with the pinned v0.6.0 client. Solo/local races averaged 49.90/54.05 FPS; two simultaneous online browsers averaged 22.81 FPS. Online test drivers reached synchronized results with two laps each and were correctly ranked DNF behind the AI finishers. No page errors or failed requests occurred. All 27 current backend regressions passed. Physical mobile hardware and physical gamepads remain untested; touch and controller checks use emulation. See [public race evidence](project-name/documentation/public-browser-verification.json), [input/network evidence](project-name/documentation/input-network-verification.json) and [actionable error checks](project-name/documentation/error-verification.json).
 
 Game release uses the checked-in Release workflow: install, tests, reviewed-asset check, build, patch version bump, commit, tag, GitHub release. Pages uses the deploy-pages workflow on main or explicit dispatch. After release, dispatch Pages if the bot version commit did not trigger it. [Release run](https://github.com/SamuelAsherRivello/babylon-lite-super-offroad-clone/actions/runs/36721392105) and [v0.0.3 deployment](https://github.com/SamuelAsherRivello/babylon-lite-super-offroad-clone/actions/runs/36721641521) succeeded. Public asset/version evidence is recorded in project-name/documentation/public-assets-verification.json.
 

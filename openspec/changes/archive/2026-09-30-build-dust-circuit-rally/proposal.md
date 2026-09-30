@@ -16,4 +16,4 @@ Create a replayable original arcade off-road racer with a landscape view, readab
 None.
 
 ## Impact
-Template app remains project-name; Babylon Lite WebGPU and exact shared-client v0.6.0 dependency. Separate backend already released and live-verified. Original Blender MCP connection is currently unreachable; asset generation and final visual acceptance remain dependent on restoring it.
+Template app remains project-name; Babylon Lite WebGPU and exact shared-client v0.6.0 dependency. Racing support was released and verified in backend v0.6.0; public compatibility is also tested against the newer shared server. Original Blender source, scoped GLBs and real previews are generated, reimported and reviewed. Release v0.0.3 and its Pages deployment are live.

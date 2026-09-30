@@ -1,0 +1,12 @@
+{
+  "url": "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/",
+  "checks": [
+    {
+      "unsupportedWebGPU": "WebGPU is unavailable. Use current Chrome or Edge with hardware acceleration enabled."
+    },
+    {
+      "failedAsset": "Unable to load truck-1.glb. Check the asset export and reload."
+    }
+  ],
+  "time": "2026-09-30T13:39:02.057Z"
+}

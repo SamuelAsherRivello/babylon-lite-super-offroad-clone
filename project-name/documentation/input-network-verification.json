@@ -17,22 +17,26 @@
           "left": 236.328125
         }
       },
-      "fps": 59.994000599962355
+      "fps": 60
     },
     {
       "emulatedGamepads": "Two keyboard racers plus two independent virtual controllers fill the four-human local grid; simultaneous motion and disconnect input release verified",
       "motion": [
-        9.232195038120652,
-        9.232195038120652,
-        8.36597028403114,
-        8.365970284031135
+        9.556217644529921,
+        9.556217644529921,
+        8.582450226392417,
+        8.582450226392412
       ]
     },
     {
       "network": "Client-side WebSocket shim delays input and onmessage by 150 ms each direction and drops every seventh outbound frame; continued authoritative motion and neutral focus release; closed transport and rejoined with fresh identity",
-      "dropped": 6
+      "dropped": 6,
+      "localCorrection": {
+        "impaired": 0.7093671065053423,
+        "settled": 0.004995372394476522
+      }
     }
   ],
   "errors": [],
-  "time": "2026-09-30T13:16:55.699Z"
+  "time": "2026-09-30T15:22:01.836Z"
 }

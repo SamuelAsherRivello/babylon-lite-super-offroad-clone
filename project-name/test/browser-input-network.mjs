@@ -191,6 +191,11 @@ try {
   await page.click("#start");
   await page.waitForFunction(() => gameDiagnostics.state.phase === "racing");
   await page.evaluate(() => (networkTest.impaired = true));
+  const correctionMagnitude = () =>
+    page.evaluate(() => {
+      const c = gameDiagnostics.localCorrection;
+      return c ? Math.hypot(c.x, c.y, c.z, c.angle) : 0;
+    });
   const before = await page.evaluate(
     () => gameDiagnostics.state.trucks.find((t) => !t.bot).x,
   );
@@ -205,10 +210,21 @@ try {
   );
   const dropped = await page.evaluate(() => networkTest.dropped);
   assert(dropped > 0);
+  const impairedCorrection = await correctionMagnitude();
+  assert(
+    impairedCorrection <= 3.5 + Math.PI * 0.6,
+    "local reconciliation exceeded its snap bounds",
+  );
   await page.evaluate(() => window.dispatchEvent(new Event("blur")));
   assert.equal(await page.evaluate(() => gameDiagnostics.input.throttle), 0);
+  await page.evaluate(() => (networkTest.impaired = false));
+  await page.waitForTimeout(800);
+  const settledCorrection = await correctionMagnitude();
+  assert(
+    settledCorrection < impairedCorrection || settledCorrection < 0.15,
+    "local reconciliation did not converge after latency cleared",
+  );
   await page.evaluate(() => {
-    networkTest.impaired = false;
     networkTest.sockets.forEach((s) =>
       s.close(3001, "test connection interruption"),
     );
@@ -228,6 +244,10 @@ try {
     network:
       "Client-side WebSocket shim delays input and onmessage by 150 ms each direction and drops every seventh outbound frame; continued authoritative motion and neutral focus release; closed transport and rejoined with fresh identity",
     dropped,
+    localCorrection: {
+      impaired: impairedCorrection,
+      settled: settledCorrection,
+    },
   });
   await context.close();
   assert.deepEqual(errors, []);

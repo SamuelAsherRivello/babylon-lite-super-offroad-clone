@@ -2,11 +2,14 @@ import { chromium } from "@playwright/test";
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
 const url =
+  process.env.GAME_URL ||
   "https://samuelasherrivello.github.io/babylon-lite-super-offroad-clone/";
 const version = process.env.EXPECTED_VERSION || "0.0.3";
-const response = await fetch(url + "version.txt");
-assert(response.ok);
-assert.equal((await response.text()).trim(), "version=" + version);
+if (process.env.SKIP_VERSION_CHECK !== "true") {
+  const response = await fetch(url + "version.txt");
+  assert(response.ok);
+  assert.equal((await response.text()).trim(), "version=" + version);
+}
 const browser = await chromium.launch({
   channel: "chrome",
   headless: true,
@@ -26,10 +29,11 @@ try {
     () => window.gameDiagnostics?.ready || window.gameDiagnostics?.fatal,
   );
   assert.equal(await page.evaluate(() => gameDiagnostics.fatal), "");
-  assert.equal(
-    await page.locator(".bottom-right b").textContent(),
-    "v" + version,
-  );
+  if (process.env.SKIP_VERSION_CHECK !== "true")
+    assert.equal(
+      await page.locator(".bottom-right b").textContent(),
+      "v" + version,
+    );
   assert.equal(assets.length, 8);
   assert(assets.every((a) => a.status === 200));
   await page.click("#solo");

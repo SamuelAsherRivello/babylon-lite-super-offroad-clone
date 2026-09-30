@@ -43,6 +43,7 @@ let view,
   seq = 0,
   pending = [],
   predicted = null,
+  localCorrection = null,
   lastPhase = "",
   rosterSignature = "",
   lastSend = 0,
@@ -78,6 +79,7 @@ function resetMode() {
   state = null;
   me = null;
   predicted = null;
+  localCorrection = null;
   paused = false;
   input.paused = false;
   input.bindings = [{ kind: "keyboard", index: 0 }];
@@ -97,18 +99,29 @@ async function chooseMode(next) {
       "dust-circuit-rally",
     );
     unsubscribe = session.subscribe((network, event) => {
+      const previousId = me;
       me = network.sessionId;
       state = network.gameState;
       if (event === "gameState" || event === "snapshot") {
         const truck = state?.trucks.find((p) => p.id === me);
         if (truck) {
+          const previousPrediction = predicted;
           pending = pending.filter((a) => a.seq > truck.ack);
           predicted = { ...truck };
           for (const a of pending) driveTruck(predicted, a, 1 / 20);
-        } else predicted = null;
+          reconcileLocalCorrection(
+            previousPrediction,
+            predicted,
+            previousId !== me || state.phase !== "racing",
+          );
+        } else {
+          predicted = null;
+          localCorrection = null;
+        }
       } else if (network.status !== "connected") {
         predicted = null;
         pending = [];
+        localCorrection = null;
       }
       update();
     });
@@ -383,6 +396,58 @@ function update() {
 function formatTime(seconds) {
   return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${(seconds % 60).toFixed(1).padStart(4, "0")}`;
 }
+function angleDifference(a, b) {
+  return Math.atan2(Math.sin(a - b), Math.cos(a - b));
+}
+function reconcileLocalCorrection(previous, next, forceSnap) {
+  const reset =
+    forceSnap ||
+    !previous ||
+    !localCorrection ||
+    localCorrection.id !== next.id ||
+    (next.recovery > 0 && localCorrection.recovery <= 0);
+  if (reset) {
+    localCorrection = {
+      id: next.id,
+      x: 0,
+      y: 0,
+      z: 0,
+      angle: 0,
+      recovery: next.recovery || 0,
+    };
+    return;
+  }
+  const correction = {
+      x: localCorrection.x + previous.x - next.x,
+      y: localCorrection.y + previous.y - next.y,
+      z: localCorrection.z + previous.z - next.z,
+      angle:
+        localCorrection.angle + angleDifference(previous.angle, next.angle),
+    },
+    distance = Math.hypot(correction.x, correction.y, correction.z);
+  if (distance > 3.5 || Math.abs(correction.angle) > Math.PI * 0.6) {
+    localCorrection.x = 0;
+    localCorrection.y = 0;
+    localCorrection.z = 0;
+    localCorrection.angle = 0;
+  } else Object.assign(localCorrection, correction);
+  localCorrection.recovery = next.recovery || 0;
+}
+function presentLocalPrediction(dt) {
+  if (!predicted || !localCorrection) return predicted;
+  const decay = Math.exp(-dt * 18);
+  localCorrection.x *= decay;
+  localCorrection.y *= decay;
+  localCorrection.z *= decay;
+  localCorrection.angle *= decay;
+  return {
+    ...predicted,
+    x: predicted.x + localCorrection.x,
+    y: predicted.y + localCorrection.y,
+    z: predicted.z + localCorrection.z,
+    angle: predicted.angle + localCorrection.angle,
+  };
+}
 function frame(now) {
   const dt = Math.min((now - lastFrame) / 1000, 0.08);
   lastFrame = now;
@@ -418,7 +483,9 @@ function frame(now) {
           ? {
               ...state,
               trucks: state.trucks.map((t) =>
-                t.id === me ? { ...predicted, steer: input.read().steer } : t,
+                t.id === me
+                  ? { ...presentLocalPrediction(dt), steer: input.read().steer }
+                  : t,
               ),
             }
           : state;
@@ -499,6 +566,9 @@ window.gameDiagnostics = {
   },
   get fps() {
     return view?.fps;
+  },
+  get localCorrection() {
+    return localCorrection && { ...localCorrection };
   },
   get graybox() {
     return graybox;

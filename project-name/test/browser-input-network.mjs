@@ -8,7 +8,7 @@ const browser = await chromium.launch({
 });
 const url =
     process.env.GAME_URL ||
-    "http://127.0.0.1:5189/babylon-lite-super-offroad-clone/?graybox=1",
+    "http://127.0.0.1:5189/babylon-lite-super-offroad-clone/",
   checks = [],
   errors = [];
 try {
@@ -53,7 +53,7 @@ try {
     touchPoints: [],
   });
   assert.equal(await p.evaluate(() => gameDiagnostics.input.throttle), 0);
-  await p.screenshot({ path: "project-name/documentation/graybox-mobile.png" });
+  await p.screenshot({ path: "project-name/documentation/mobile.png" });
   await p.setViewportSize({ width: 844, height: 390 });
   await p.waitForTimeout(200);
   assert(
@@ -66,7 +66,7 @@ try {
   );
   assert.deepEqual(await p.evaluate(() => gameDiagnostics.camera), camera);
   await p.screenshot({
-    path: "project-name/documentation/graybox-landscape-mobile.png",
+    path: "project-name/documentation/landscape-mobile.png",
   });
   checks.push({
     emulatedTouch:
@@ -76,9 +76,69 @@ try {
       scroll: document.documentElement.scrollHeight,
       canvas: document.querySelector("canvas").getBoundingClientRect().toJSON(),
     })),
-    grayboxFps: await p.evaluate(() => gameDiagnostics.fps),
+    fps: await p.evaluate(() => gameDiagnostics.fps),
   });
   await mobile.close();
+
+  const padsContext = await browser.newContext(),
+    padsPage = await padsContext.newPage();
+  padsPage.on("pageerror", (e) => errors.push(e.message));
+  await padsPage.addInitScript(() => {
+    window.testPads = [0, 1].map((index) => ({
+      index,
+      connected: true,
+      axes: [index === 0 ? -0.8 : 0.8],
+      buttons: Array.from({ length: 16 }, (_, i) => ({
+        value: i === 7 ? 1 : 0,
+        pressed: i === 7,
+      })),
+    }));
+    Object.defineProperty(navigator, "getGamepads", {
+      value: () => window.testPads,
+    });
+  });
+  await padsPage.goto(url);
+  await padsPage.waitForFunction(() => window.gameDiagnostics?.ready);
+  await padsPage.click("#local");
+  await padsPage.click("#join-pad");
+  await padsPage.click("#join-pad");
+  assert.equal(
+    await padsPage.evaluate(() => gameDiagnostics.bindings.length),
+    4,
+  );
+  await padsPage.click("#ready");
+  await padsPage.click("#start");
+  await padsPage.waitForFunction(
+    () => gameDiagnostics.state.phase === "racing",
+  );
+  await padsPage.keyboard.down("w");
+  await padsPage.keyboard.down("ArrowUp");
+  await padsPage.waitForTimeout(750);
+  assert.equal(
+    await padsPage.evaluate(
+      () => gameDiagnostics.state.trucks.filter((t) => !t.bot).length,
+    ),
+    4,
+  );
+  const motion = await padsPage.evaluate(() =>
+    gameDiagnostics.state.trucks.map((t) => Math.hypot(t.vx, t.vz)),
+  );
+  assert(motion.every((speed) => speed > 0));
+  await padsPage.evaluate(() => {
+    testPads.forEach((p) => (p.connected = false));
+    window.dispatchEvent(new Event("gamepaddisconnected"));
+  });
+  assert.equal(
+    await padsPage.evaluate(() => gameDiagnostics.input.throttle),
+    0,
+  );
+  await padsPage.waitForTimeout(500);
+  checks.push({
+    emulatedGamepads:
+      "Two keyboard racers plus two independent virtual controllers fill the four-human local grid; simultaneous motion and disconnect input release verified",
+    motion,
+  });
+  await padsContext.close();
 
   const context = await browser.newContext(),
     page = await context.newPage();

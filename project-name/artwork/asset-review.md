@@ -1,0 +1,13 @@
+# Copper Basin asset review
+
+Original Blender 5.2.2 LTS geometry, created through the configured official MCP. Editable sources and genuine saved Cycles renders accompany the scoped GLBs. No reference artwork, branded track or assets were copied.
+
+The fixed gameplay camera shows the entire 86 × 66 m terrain and every legal route in 16:9. Source geometry is in Blender Z-up; the export root reflects X to cancel Lite's glTF conversion, and the game opts into mirrored-mesh support. The engine view was checked against the shared starting grid and track. Mesh heights were generated from the released terrain contract on a 0.5 m grid; road edges are clipped to the route distance field. The continuous heightfield replaced folded swept quads at tight turns.
+
+The full course was compared against target-v1 and genuine Blender/game frames. Two focused corrections improved terrain continuity and roof-number/paint contrast. Restrained low rocks, tire barriers, a fence, gantry and one spectator canopy preserve sightlines. The concept's machinery and tall cliffs exceeded the brief and were omitted. The final surface retains deliberately faceted edges; the overall scene is simpler than the generated concept. Roof digits are clear in the prototype and source, while color and attached number labels identify trucks at smaller gameplay sizes.
+
+Export/reimport verified nine assets, materials, 3.295 m truck length and centered wheel axle. Truck meshes merge from fourteen objects to five material primitives; original editable parts remain in the source. Wheels remain separate with runtime steering and rotation. No baked animation clips or external texture files are needed; exported PBR materials use simple colors.
+
+Measured budgets: 111,408 course triangles, ten course material primitives, five per truck body, three instanced wheel primitives, approximately 5.8 MB total GLBs, 1024 px shadow map, 80 dust and 120 skid instances. A warmed 1440 × 1000 headless Chrome gameplay frame measured approximately 46 FPS after truck merging, up from approximately 42 FPS with separate truck parts. This is automation on this workstation, not a physical mobile-device benchmark. Complete race performance is also recorded by the browser verification report. Terrain surfaces receive shadows; props and vehicles cast them without redundant coplanar terrain casting.
+
+Browser gameplay uses the actual GLBs and recreated lighting. The saved Blender preview uses a corresponding orthographic composition; its right-handed source camera appears horizontally reversed relative to the game's left-handed camera. It is a genuine render, not a game screenshot. Prototype and full-course images are separately labeled.

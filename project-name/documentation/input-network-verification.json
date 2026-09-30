@@ -1,5 +1,5 @@
 {
-  "url": "http://127.0.0.1:5189/babylon-lite-super-offroad-clone/?graybox=1",
+  "url": "http://127.0.0.1:5189/babylon-lite-super-offroad-clone/",
   "checks": [
     {
       "emulatedTouch": "concurrent gas/steer/boost, release, unchanged camera after resize",
@@ -17,7 +17,16 @@
           "left": 236.328125
         }
       },
-      "grayboxFps": 59.99400060208534
+      "fps": 59.994000599962355
+    },
+    {
+      "emulatedGamepads": "Two keyboard racers plus two independent virtual controllers fill the four-human local grid; simultaneous motion and disconnect input release verified",
+      "motion": [
+        9.232195038120652,
+        9.232195038120652,
+        8.36597028403114,
+        8.365970284031135
+      ]
     },
     {
       "network": "Client-side WebSocket shim delays input and onmessage by 150 ms each direction and drops every seventh outbound frame; continued authoritative motion and neutral focus release; closed transport and rejoined with fresh identity",
@@ -25,5 +34,5 @@
     }
   ],
   "errors": [],
-  "time": "2026-09-30T10:11:08.140Z"
+  "time": "2026-09-30T13:16:55.699Z"
 }

@@ -5,9 +5,13 @@ import {
   enableOrthographicCamera,
   createHemisphericLight,
   createDirectionalLight,
+  createPcfDirectionalShadowGenerator,
+  enableMirroredMeshes,
+  setShadowTaskCasterMeshes,
   loadGltf,
   addToScene,
   registerScene,
+  registerSceneWithShadowSupport,
   startEngine,
   createHierarchyInstancePool,
   setHierarchyInstanceCount,
@@ -119,9 +123,19 @@ export async function createRacingView(canvas, labels, base, graybox = false) {
   const ambient = createHemisphericLight([0, 1, 0], 0.55);
   ambient.groundColor = [0.3, 0.32, 0.38];
   addToScene(scene, ambient);
-  const sun = createDirectionalLight([-0.6, -1, 0.45], 0.85);
+  const sun = createDirectionalLight([-0.6, -1, 0.45], graybox ? 0.85 : 2.2);
   sun.diffuse = [1, 0.85, 0.65];
   addToScene(scene, sun);
+  let shadowGenerator;
+  if (!graybox) {
+    shadowGenerator = createPcfDirectionalShadowGenerator(engine, sun, {
+      mapSize: 1024,
+      bias: 0.0005,
+      darkness: 0.25,
+    });
+    sun.shadowGenerator = shadowGenerator;
+    addToScene(scene, shadowGenerator);
+  }
   const pools = {};
   function shape(mesh, color, capacity = 1) {
     const mat = createStandardMaterial();
@@ -189,6 +203,8 @@ export async function createRacingView(canvas, labels, base, graybox = false) {
             `Unable to load ${name}.glb. Check the asset export and reload.`,
           );
         }
+        // The Blender export root cancels Lite's default X reflection while
+        // retaining the loader's authored winding/normal convention.
         pools[name] = createHierarchyInstancePool(
           asset.entities[0],
           name === "wheel"
@@ -197,10 +213,25 @@ export async function createRacingView(canvas, labels, base, graybox = false) {
               ? 5
               : 1,
         );
+        for (const mesh of pools[name].meshes) {
+          mesh.receiveShadows = true;
+        }
         addToScene(scene, asset);
       }),
     );
     put(pools.course, [matrix(0, 0, 0)]);
+    if (shadowGenerator)
+      setShadowTaskCasterMeshes(
+        shadowGenerator,
+        Object.values(pools)
+          .flatMap((pool) => pool.meshes)
+          .filter(
+            (mesh) =>
+              !/Quarry ground|track edge|racing dirt|Damp clay/.test(
+                mesh.material.name,
+              ),
+          ),
+      );
   }
   const shadows = shape(
       createSphere(engine, { diameter: 2, segments: 8 }),
@@ -231,6 +262,7 @@ export async function createRacingView(canvas, labels, base, graybox = false) {
     fps = 0,
     lastFps = performance.now();
   const smooth = new Map(),
+    pickupAvailability = new Map(),
     particles = [],
     marks = [];
   const labelNodes = COLORS.map((c, i) => {
@@ -240,10 +272,12 @@ export async function createRacingView(canvas, labels, base, graybox = false) {
     labels.append(el);
     return el;
   });
-  await registerScene(scene);
+  await enableMirroredMeshes(scene);
+  if (shadowGenerator) await registerSceneWithShadowSupport(scene);
+  else await registerScene(scene);
   onBeforeRender(scene, (delta) => {
     if (!state || disposed) return;
-    const dt = Math.min(delta / 1000, 0.06),
+    const dt = state.animationPaused ? 0 : Math.min(delta / 1000, 0.06),
       now = performance.now();
     frames++;
     if (now - lastFps >= 1000) {
@@ -253,13 +287,34 @@ export async function createRacingView(canvas, labels, base, graybox = false) {
     }
     const wheels = [],
       contact = [];
+    for (const p of state.pickups) {
+      const available = p.respawn <= 0;
+      if (
+        pickupAvailability.get(p.id) === true &&
+        !available &&
+        state.phase === "racing"
+      ) {
+        for (let j = 0; j < 8; j++)
+          particles.push({
+            x: p.x + Math.sin((j * Math.PI) / 4) * 0.5,
+            y: terrainAt(p.x, p.z).height + 0.4,
+            z: p.z + Math.cos((j * Math.PI) / 4) * 0.5,
+            life: 0.6,
+            scale: 0.2,
+          });
+      }
+      pickupAvailability.set(p.id, available);
+    }
     for (let i = 0; i < 4; i++) {
       const p = state.trucks.find((t) => t.number === i + 1),
         el = labelNodes[i];
       el.hidden = !p;
-      put(pools["truck-" + (i + 1)], []);
-      put(rings[i], []);
-      if (!p) continue;
+      if (!p) {
+        put(pools["truck-" + (i + 1)], []);
+        put(rings[i], []);
+        continue;
+      }
+      if (p.id !== me) put(rings[i], []);
       let old = smooth.get(p.id) || {
         x: p.x,
         z: p.z,
@@ -324,6 +379,7 @@ export async function createRacingView(canvas, labels, base, graybox = false) {
         ]);
       if (
         state.phase === "racing" &&
+        !state.animationPaused &&
         ((old.grounded === false && p.grounded) || old.speed - speed > 3)
       ) {
         for (let j = 0; j < 8; j++)
@@ -339,6 +395,7 @@ export async function createRacingView(canvas, labels, base, graybox = false) {
       old.speed = speed;
       if (
         state.phase === "racing" &&
+        !state.animationPaused &&
         speed > 3 &&
         p.grounded &&
         Math.random() < 0.4

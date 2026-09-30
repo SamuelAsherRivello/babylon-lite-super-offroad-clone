@@ -4,7 +4,7 @@ import { aiInput } from "@rmc/multiplayer-client/racing";
 import { mkdir, writeFile } from "node:fs/promises";
 const url =
   process.env.GAME_URL ||
-  "http://127.0.0.1:5188/babylon-lite-super-offroad-clone/?graybox=1";
+  "http://127.0.0.1:5188/babylon-lite-super-offroad-clone/";
 const evidence = new URL("../documentation/", import.meta.url);
 await mkdir(evidence, { recursive: true });
 const browser = await chromium.launch({
@@ -29,6 +29,7 @@ async function open() {
     () => window.gameDiagnostics?.ready || window.gameDiagnostics?.fatal,
   );
   assert.equal(await page.evaluate(() => gameDiagnostics.fatal), "");
+  assert.equal(await page.evaluate(() => gameDiagnostics.graybox), false);
   return page;
 }
 async function state(page) {
@@ -50,10 +51,13 @@ const maps = [
 async function race(pages, local = false) {
   const held = new Map(),
     started = Date.now();
+  const fps = [];
   let result;
   while (Date.now() - started < 140000) {
     for (const page of pages) {
       const s = await state(page);
+      const measured = await page.evaluate(() => gameDiagnostics.fps);
+      if (measured > 0) fps.push(measured);
       if (s?.phase === "results") {
         result = s;
         continue;
@@ -110,6 +114,11 @@ async function race(pages, local = false) {
       finish: t.finish,
     })),
     ranking: result.ranking,
+    fps: {
+      min: Math.min(...fps),
+      max: Math.max(...fps),
+      average: fps.reduce((a, b) => a + b, 0) / fps.length,
+    },
   };
 }
 try {
@@ -137,7 +146,7 @@ try {
   report.checks.push({ solo: await race([solo]) });
   assert.deepEqual(await solo.evaluate(() => gameDiagnostics.camera), camera);
   await solo.screenshot({
-    path: new URL("graybox-solo-results.png", evidence).pathname.slice(1),
+    path: new URL("solo-results.png", evidence).pathname.slice(1),
   });
   await solo.waitForFunction(() => gameDiagnostics.state.phase === "waiting", {
     timeout: 12000,
@@ -162,7 +171,8 @@ try {
   for (const p of [a, b])
     await p.waitForFunction(
       () => gameDiagnostics.session?.status === "connected",
-      { timeout: 20000 },
+      null,
+      { timeout: 60000 },
     );
   await a.waitForFunction(() => gameDiagnostics.state.people.length === 2);
   await a.click("#ready");
@@ -172,7 +182,7 @@ try {
   await a.waitForFunction(() => gameDiagnostics.state.phase === "racing");
   report.checks.push({ online: await race([a, b]) });
   await a.screenshot({
-    path: new URL("graybox-online-results.png", evidence).pathname.slice(1),
+    path: new URL("online-results.png", evidence).pathname.slice(1),
   });
   for (const p of [a, b]) await p.context().close();
   const mobile = await browser.newContext({
@@ -213,7 +223,7 @@ try {
   });
   assert.equal(await p.evaluate(() => gameDiagnostics.input.throttle), 0);
   await p.screenshot({
-    path: new URL("graybox-mobile.png", evidence).pathname.slice(1),
+    path: new URL("mobile.png", evidence).pathname.slice(1),
   });
   await p.setViewportSize({ width: 844, height: 390 });
   assert(
@@ -225,7 +235,7 @@ try {
     ) < 0.02,
   );
   await p.screenshot({
-    path: new URL("graybox-landscape-mobile.png", evidence).pathname.slice(1),
+    path: new URL("landscape-mobile.png", evidence).pathname.slice(1),
   });
   await mobile.close();
   report.checks.push(

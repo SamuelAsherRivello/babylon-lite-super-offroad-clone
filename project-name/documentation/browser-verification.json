@@ -1,34 +1,34 @@
 {
-  "url": "http://127.0.0.1:5188/babylon-lite-super-offroad-clone/?graybox=1",
-  "started": "2026-09-30T10:12:59.071Z",
+  "url": "http://127.0.0.1:5189/babylon-lite-super-offroad-clone/",
+  "started": "2026-09-30T11:20:49.505Z",
   "checks": [
     {
       "solo": {
-        "time": 60.43333333333246,
+        "time": 60.466666666665795,
         "trucks": [
           {
             "number": 1,
             "bot": false,
             "laps": 3,
-            "finish": 50.066666666666386
+            "finish": 49.49999999999975
           },
           {
             "number": 2,
             "bot": true,
             "laps": 3,
-            "finish": 58.399999999999245
+            "finish": 58.23333333333259
           },
           {
             "number": 3,
             "bot": true,
             "laps": 3,
-            "finish": 60.43333333333246
+            "finish": 60.466666666665795
           },
           {
             "number": 4,
             "bot": true,
             "laps": 3,
-            "finish": 59.93333333333249
+            "finish": 60.13333333333248
           }
         ],
         "ranking": [
@@ -36,36 +36,41 @@
           "ai-1-2",
           "ai-1-4",
           "ai-1-3"
-        ]
+        ],
+        "fps": {
+          "min": 29.74419988032009,
+          "max": 60.021647150727624,
+          "average": 50.65761564589143
+        }
       }
     },
     {
       "local": {
-        "time": 59.86666666666583,
+        "time": 60.29999999999914,
         "trucks": [
           {
             "number": 1,
             "bot": false,
             "laps": 3,
-            "finish": 49.53333333333308
+            "finish": 49.96666666666639
           },
           {
             "number": 2,
             "bot": false,
             "laps": 3,
-            "finish": 55.366666666666084
+            "finish": 55.49999999999941
           },
           {
             "number": 3,
             "bot": true,
             "laps": 3,
-            "finish": 59.86666666666583
+            "finish": 60.29999999999914
           },
           {
             "number": 4,
             "bot": true,
             "laps": 3,
-            "finish": 58.46666666666591
+            "finish": 58.6666666666659
           }
         ],
         "ranking": [
@@ -73,12 +78,17 @@
           "local-2",
           "ai-1-4",
           "ai-1-3"
-        ]
+        ],
+        "fps": {
+          "min": 32.35611334520191,
+          "max": 60.27072423531571,
+          "average": 52.56534434648133
+        }
       }
     },
     {
       "online": {
-        "time": 69.73333333333194,
+        "time": 71.0666666666652,
         "trucks": [
           {
             "number": 1,
@@ -96,25 +106,30 @@
             "number": 3,
             "bot": true,
             "laps": 3,
-            "finish": 54.699999999999456
+            "finish": 58.53333333333257
           },
           {
             "number": 4,
             "bot": true,
             "laps": 3,
-            "finish": 59.16666666666587
+            "finish": 56.03333333333271
           }
         ],
         "ranking": [
-          "ai-1-3",
           "ai-1-4",
-          "G5xl0yUbo",
-          "y_c8wmDC0"
-        ]
+          "ai-1-3",
+          "-mDgZjlRQ",
+          "o_npb4k_K"
+        ],
+        "fps": {
+          "min": 8.918838569337987,
+          "max": 29.109256742971066,
+          "average": 20.061883464718903
+        }
       }
     },
     "concurrent emulated touch, cancellation, responsive 16:9, static camera, focus release, pause/replay"
   ],
   "errors": [],
-  "finished": "2026-09-30T10:16:42.204Z"
+  "finished": "2026-09-30T11:24:30.405Z"
 }

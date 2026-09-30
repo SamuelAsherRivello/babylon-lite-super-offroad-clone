@@ -4,13 +4,13 @@
 
 An original four-truck browser arcade racer with a fixed 16:9 landscape camera, solo practice, shared-screen racing, and online racing on the released shared server.
 
-**Development status:** playable graybox; final Blender assets and public game release are pending the official Blender MCP connection. No finished artwork or public game deployment is claimed.
+Original Blender artwork is integrated. Public release verification is in progress.
 
 ## Preview
 
-![Actual graybox solo results](project-name/documentation/graybox-solo-results.png)
+![Dust Circuit Rally gameplay](project-name/documentation/gameplay.png)
 
-This screenshot is the running WebGPU development build, with placeholder geometry explicitly labeled. The generated art target in art-direction/target-v1/ is a design reference, not a gameplay screenshot.
+This is the running WebGPU game with the exported Blender course and trucks. The generated art target in art-direction/target-v1/ is a design reference. Genuine Blender renders and editable sources are in project-name/artwork/.
 
 ## Getting Started
 
@@ -20,12 +20,15 @@ Use Node 24 and npm. Current Chrome/Edge with WebGPU and hardware acceleration i
 npm ci
 npm run dev -- --port 5188
 npm test
+node project-name/test/assets.mjs
 npm run build
 ```
 
-Open http://127.0.0.1:5188/babylon-lite-super-offroad-clone/?graybox=1 for the development course. The normal URL requires the reviewed Blender exports in project-name/public/assets/. It reports a useful asset error until those exist. Solo/local simulation needs no game server; dependency installation still needs network access.
+Open http://127.0.0.1:5188/babylon-lite-super-offroad-clone/. Solo/local simulation needs no game server after assets load; dependency installation needs network access. The optional ?graybox=1 query explicitly enables the earlier development geometry.
 
-For stable browser verification, build, run npm run preview -- --port 5189, and set GAME_URL to the preview URL including ?graybox=1 before npm run test:browser. The browser suite uses installed Google Chrome and emulates keyboard and touch; no physical-controller validation is implied.
+For browser verification, build, run `npm run preview -- --port 5189`, and set `GAME_URL` to the preview URL before `npm run test:browser`. Also run `node project-name/test/browser-input-network.mjs` against that URL. The browser suites use installed Google Chrome and emulated keyboard/touch; physical controller validation is not implied.
+
+Format edited sources with `npm exec --yes --package=prettier@3.6.2 -- prettier --write project-name/src/*.js project-name/test/*.mjs project-name/index.html project-name/src/style.css`.
 
 ## Controls and Rules
 
@@ -55,15 +58,15 @@ Online admission uses dust-circuit-rally on the shared server. Up to four humans
 
 ## Assets
 
-art-direction/build-assets.py is a prepared Blender-side generator, not evidence of exported assets. It is intended to run through the existing official Blender MCP and create one new owned scene while preserving unrelated work. Editable source will be project-name/artwork/copper-basin.blend. Course, truck variants, centered wheels, props and pickups will be GLBs in project-name/public/assets/.
+The editable Blender source is [copper-basin.blend](project-name/artwork/copper-basin.blend). Nine scoped GLBs in project-name/public/assets/ contain the course, four numbered truck bodies, centered wheel, reusable prop kit and two pickups. The representative truck/tabletop prototype and full-course render are in project-name/artwork/. [Export/reimport audit](project-name/artwork/reimport-audit.json) records actual dimensions and materials.
 
-The source uses meters. Game axes are +Y up, X/Z ground; trucks face +Z. Wheels rotate around their X axle; front wheel steering and chassis suspension are runtime effects. Materials use export-compatible PBR colors. Seed 307 controls quarry scatter. Track contract and terrain samples are recorded in art-direction/track-v1.json.
+The source uses meters. Game axes are +Y up, X/Z ground; trucks face +Z. The export root cancels Lite's default X reflection; mirrored-mesh support preserves winding. Wheels rotate around their centered X axle; front steering, chassis lean/pitch, suspension and pickups animate at runtime. Materials use export-compatible PBR colors. Seed 307 controls quarry scatter. Track contract and terrain samples are recorded in art-direction/track-v1.json, derived from the released shared track definition.
 
-Final acceptance requires Blender export/reimport, genuine gameplay-camera review against the visual target, actual Babylon Lite import, and measured browser performance. Physical gamepad, real mobile hardware, and network impairment checks are documented separately from automation.
+Original geometry was authored through the configured official Blender MCP in a private background scene using a reviewed, bounded, windowless runner. Existing editors and preferences were preserved. Course and truck export copies merge by material while the source retains editable objects. The course has 111,408 triangles and ten material primitives; each truck body has five primitives. All nine GLBs total approximately 5.8 MB. Lighting uses warm sun, cool ambient fill, 1024px PCF shadows and inexpensive contact effects. Dust is capped at 80 instances and skids at 120. The real game was inspected against the concept target; terrain folding, paint contrast, coordinate alignment and shadow registration were corrected. See [asset review](project-name/artwork/asset-review.md) for measured cost and remaining art differences.
 
 ## Verification and Delivery
 
-npm test checks independent keyboard/gamepad mappings and the released offline race loop. project-name/test/browser.mjs drives full races using actual keyboard input and records evidence under project-name/documentation/. project-name/test/browser-input-network.mjs verifies concurrent touch and a native WebSocket delay/drop/reconnect simulation. The complete browser suite passed on Node 24.19.0 with no page errors. The two online humans were correctly marked DNF after two laps; both offline humans completed three. Graybox mobile emulation measured approximately 60 FPS. See [delivery status](project-name/documentation/delivery-status.md) for exact verification scope. node project-name/test/assets.mjs requires reviewed real GLB assets before either release or Pages deployment; it intentionally fails while Blender is unavailable.
+npm test checks independent keyboard/gamepad mappings and the released offline race loop. project-name/test/browser.mjs drives complete solo, local and online races through keyboard input and captures actual game evidence. project-name/test/browser-input-network.mjs checks concurrent touch and a native WebSocket delay/drop/reconnect simulation. [Delivery status](project-name/documentation/delivery-status.md) records exact results and hardware limitations. `node project-name/test/assets.mjs` requires reviewed real GLB assets before release or Pages deployment.
 
 The shared backend was released and live-verified as [v0.6.0](https://github.com/SamuelAsherRivello/rmc-colyseus-multiplayer-server/releases/tag/v0.6.0), including all 23 regression tests. [Release/deployment run](https://github.com/SamuelAsherRivello/rmc-colyseus-multiplayer-server/actions/runs/36695393931). The exact client artifact is pinned in package.json and package-lock.json.
 

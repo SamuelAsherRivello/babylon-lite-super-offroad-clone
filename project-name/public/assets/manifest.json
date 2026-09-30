@@ -1,0 +1,24 @@
+{
+  "source": "copper-basin.blend",
+  "trackVersion": 1,
+  "units": "meters",
+  "gameAxes": "+y up, x/z ground; trucks face +z. Export root reflects X to cancel Babylon Lite glTF handedness conversion.",
+  "exports": [
+    "course",
+    "truck-1",
+    "truck-2",
+    "truck-3",
+    "truck-4",
+    "wheel",
+    "nitro",
+    "traction",
+    "prop-kit"
+  ],
+  "courseTriangles": 111408,
+  "reviewedInEngine": true,
+  "limitations": [
+    "Materials use simple glTF PBR; lighting recreated in engine.",
+    "Wheel/chassis animation is runtime-driven."
+  ],
+  "provenance": "Original geometry authored in Blender through official MCP; visual target is inspiration only."
+}

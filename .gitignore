@@ -6,6 +6,9 @@ node_modules/
 .npm-cache/
 .env
 *.blend1
+art-direction/bridge-session-result.json
+project-name/documentation/no-shadow.png
+project-name/documentation/shadow.png
 /project-name/dist/
 
 # Local configuration. Commit examples only, never credentials.

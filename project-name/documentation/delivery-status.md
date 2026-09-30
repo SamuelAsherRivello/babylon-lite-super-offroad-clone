@@ -1,32 +1,25 @@
 # Delivery status — 2026-09-30
 
-The approved prompt is being executed with the user’s explicit 16:9 landscape requirement. This is a playable development graybox, not finished Blender artwork or a released game.
+The approved Dust Circuit Rally prompt is implemented with the user's 16:9 landscape requirement. The normal production URL uses original Blender GLBs. Public release verification is in progress; client finalization remains open until it passes.
 
-## Completed
+## Verified implementation
 
-- Shared authoritative four-truck racing backend and browser-safe track/simulation.
-- Released client/backend v0.6.0; complete 23-test server regressions, typecheck, package-content check, strict specifications, public health/version and live integration verification.
-- Exact released tarball pinned in client dependency/lockfile.
-- Solo, local two-keyboard, online shared admission, readiness, frozen grid, results and replay.
-- Keyboard/gamepad mappings, independent input, emulated concurrent touch, focus release, local pause and neutral online pause.
-- 16:9 course framing and fixed camera; desktop and mobile landscape settings fit without scroll.
-- Browser races reached results in about 60 seconds offline and 70 seconds online. Both local humans completed three laps. The online test humans completed two laps and were correctly ranked DNF behind AI finishers.
-- Native browser WebSocket test with 150 ms delays both ways and six intentionally dropped input frames: authoritative motion continued, focus released input, and reconnect produced a fresh identity.
-- Three client unit tests, production build, real WebGPU graybox screenshots, and no observed page errors in completed checks.
-- Graybox measured about 60 FPS in headless Chrome; this is not final-asset or physical-device performance.
-- Backend accepted specification synced to `openspec/specs/dust-racing/spec.md`; archived change `2026-09-30-add-dust-circuit-rally`. Upstream documentation edits safely merged without rewriting history.
+- Released authoritative backend/client v0.6.0, 23 server regressions, typecheck, package checks, strict specs and public health/live integration verification. Exact release artifact is pinned in the client dependency and lockfile.
+- Editable Blender 5.2.2 LTS source, representative truck/tabletop prototype, genuine full-course render, nine scoped GLBs and final reimport audit. Actual engine frames were inspected and the acceptance manifest marked reviewed afterward.
+- Full solo/local/online race results with real production GLBs. Verification ran on Node 24.19.0, Chrome WebGPU, 11:20:49–11:24:30 UTC. Solo completed in 60.47 seconds with the human finishing three laps at 49.50 seconds; both local humans finished at 49.97/55.50 seconds. Online reached synchronized results at 71.07 seconds; both test humans completed two laps and were correctly ranked DNF behind AI finishers.
+- Static camera, full-course framing, pause/replay, keyboard input/focus release, original synthesized audio and mute/volume controls. Portrait emulation preserves landscape; 844 × 390 landscape emulation fits without scrolling.
+- Concurrent emulated touch gas/steer/nitro and cancellation. Two keyboard racers plus two virtual controllers filled the four-human local grid with independent simultaneous motion; controller disconnect released input.
+- WebSocket shim imposed 150 ms delay each direction and dropped six input frames. Authoritative motion continued, focus released controls, and transport interruption rejoined with a fresh identity.
+- Three client unit tests, reviewed asset check and production build pass; no page errors in completed suites.
 
-## Required before final delivery
+## Performance and limits
 
-1. Restore the configured official Blender MCP connection at 127.0.0.1:9876. Its read-only scene query was unreachable. No auxiliary Blender process or replacement server was launched.
-2. Execute scoped asset construction, refine genuine gameplay-camera previews against the target, save editable `.blend`, scoped GLBs, reimport and verify in Babylon Lite. The prepared script is not evidence of generated assets.
-3. Measure final artwork performance, review missing details, and set `reviewedInEngine` only after actual inspection. The asset acceptance script deliberately blocks Release and Pages until then.
-4. Release/deploy the game, verify the public client against released backend, synchronize checkout, sync/archive the client OpenSpec change, and finish template delivery gate.
+Actual asset solo/local browser races averaged 50.66/52.57 FPS on this workstation, with transient lower samples. Running two WebGPU browser contexts concurrently averaged 20.06 FPS. A smaller emulated landscape viewport measured approximately 60 FPS. These are automated workstation measurements; physical mobile hardware and physical gamepads remain untested. Virtual gamepad verification covers bindings/admission/input, not hardware compatibility.
 
-Physical gamepads, real mobile hardware, and final GLB imports remain unverified. The automated gamepad checks cover mapping only. AI fillers are server controlled, and in-memory hosting resets do not preserve race progress.
+One initial online lobby wait timed out; two independent connection probes and the full subsequent race succeeded with a correctly configured 60-second startup allowance. Online play uses the existing in-memory host; interrupted sessions may reset and progress is not durable. Reconnect is fresh admission. No persistent progression or private/mixed local-online rooms are provided.
 
-## Template decisions
+## Template and specification decisions
 
-GitHub template generation follows the creator skill and AGENTS.md rather than the checklist’s conflicting manual-copy history instruction. `project-name/` stays the application root per AGENTS.md. Version data and four corner roles are preserved. Placeholder README content was replaced; the canonical screenshot is explicitly labeled graybox. The checklist remains open until final delivery; no cleanup is requested while acceptance is incomplete.
+GitHub template generation follows the creator skill and AGENTS.md over the checklist's conflicting manual-copy history instruction. project-name/ remains the Vite application root per AGENTS.md. Version data and all four corner roles are retained. OpenSpec 1.13.1 reports a healthy project root. Backend accepted spec was synced and archived as 2026-09-30-add-dust-circuit-rally; client change build-dust-circuit-rally awaits public verification and sync/archive.
 
-The final game release and public URL have not been claimed. Client change `build-dust-circuit-rally` remains active with Blender and public delivery tasks open. Final complete browser run: 2026-09-30 10:12:59–10:16:42 UTC, all included assertions passed and no page errors. Node 24.19.0 ran the verification scripts. The online test reached results with two humans marked DNF; it does not claim those humans completed three laps.
+Evidence: browser-verification.json, input-network-verification.json, actual game screenshots, ../artwork/reimport-audit.json and ../artwork/asset-review.md.

@@ -4,6 +4,7 @@ import {
   NEUTRAL,
   driveTruck,
   makeTruck,
+  aiInput,
 } from "@rmc/multiplayer-client/racing";
 import { COLORS } from "@rmc/multiplayer-client/racing-track";
 import versionText from "../../version.txt?raw";
@@ -421,7 +422,23 @@ function frame(now) {
               ),
             }
           : state;
-      view.setState(renderState, me);
+      view.setState(
+        {
+          ...renderState,
+          trucks: renderState.trucks.map((t) => ({
+            ...t,
+            steer:
+              t.steer ??
+              (t.bot
+                ? aiInput(t).steer
+                : sim
+                  ? input.read(Number(t.id.split("-")[1]) - 1).steer
+                  : 0),
+          })),
+          animationPaused: paused && mode !== "online",
+        },
+        me,
+      );
       sound.update(
         state,
         state.trucks.find((t) => t.id === me),

@@ -1,7 +1,7 @@
 # Design
 
 ## Context
-The required template is generated into this repository; app root stays project-name per AGENTS. Server v0.6.0 already provides isolated racing, 30Hz simulation, 20Hz snapshots and fresh reconnect. Blender bridge is currently unavailable.
+The required template is generated into this repository; app root stays project-name per AGENTS. Server v0.6.0 provides isolated racing, 30Hz simulation, 20Hz snapshots and fresh reconnect. Original Blender assets have been exported, reimported and reviewed in the actual game.
 
 ## Goals / Non-Goals
 Goals: full readable landscape circuit, responsive arcade handling, coherent original assets, online and offline shared rules. Non-goals: persistent progression, private rooms, full rigid-body wheels or extra tracks.
@@ -15,7 +15,7 @@ Goals: full readable landscape circuit, responsive arcade handling, coherent ori
 
 ## Risks / Trade-offs
 - GPU/browser availability: actionable initialization error and explicit verification limits.
-- Blender connection absent: prepare original asset authoring script; do not claim generated or reviewed outputs until executed through official MCP.
+- Blender assets: use the configured official MCP and reviewed bounded windowless runner. Preserve editable parts while merging export copies by material. Opt into mirrored meshes and shadow scene registration in Lite. Continuous sampled terrain avoids folded strips at tight curves.
 - Hosting lifetime: short independent races with visible fresh reconnect; no offline fallback for online mode.
 - No physical gamepads available to automation: test mappings synthetically and report physical hardware as unverified.
 

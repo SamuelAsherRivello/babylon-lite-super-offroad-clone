@@ -29,8 +29,10 @@ jobs:
           node-version: 24
       - name: Install dependencies
         run: npm ci
-      - name: Test template
+      - name: Test racing rules and controls
         run: npm test
+      - name: Require reviewed Blender exports
+        run: node project-name/test/assets.mjs
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Build demo

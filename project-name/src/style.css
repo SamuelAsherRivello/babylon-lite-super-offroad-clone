@@ -1,76 +1,795 @@
+:root {
+  font-family: Inter, Arial, sans-serif;
+  color: #f6ecd6;
+  background: #171d1f;
+  font-synthesis: none;
+  --sand: #edbd6d;
+  --muted: #9ca8a5;
+  --line: #394244;
+}
+* {
+  box-sizing: border-box;
+}
 html,
 body {
-  height: 100%;
   margin: 0;
+  min-height: 100%;
+  overscroll-behavior: none;
 }
-
-#ui_layer {
-  position: fixed;
-  inset: var(--ui-margin-y, 20px) var(--ui-margin-x, 20px);
+body {
+  background: radial-gradient(
+    ellipse at 50% 0,
+    #35413c 0,
+    #202a29 35%,
+    #171d1f 75%
+  );
+  min-height: 100dvh;
+}
+button,
+a,
+input {
+  touch-action: manipulation;
+}
+button,
+a {
+  color: inherit;
+}
+button {
+  font:
+    700 12px/1.2 Arial,
+    sans-serif;
+  letter-spacing: 0.07em;
+  background: #283230;
+  border: 1px solid #53605b;
+  border-radius: 4px;
+  padding: 11px 17px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+button:hover {
+  background: #3c4942;
+}
+button:active {
+  transform: translateY(1px);
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.primary {
+  background: var(--sand);
+  border-color: var(--sand);
+  color: #26291f;
+}
+.primary:hover {
+  background: #f6cf89;
+}
+.selected {
+  border-color: var(--sand);
+  color: var(--sand);
+}
+a {
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+a:hover {
+  color: var(--sand);
+}
+[hidden] {
+  display: none !important;
+}
+:focus-visible {
+  outline: 3px solid #53cfe7;
+  outline-offset: 4px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  font-weight: 800;
+  color: var(--sand);
+}
+.corner {
+  position: relative;
+  z-index: 2;
+}
+.top-left {
+  position: absolute;
+  top: 23px;
+  left: 32px;
+}
+.top-left h1 {
+  font-family: Impact, "Arial Narrow", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0.045em;
+  margin: 5px 0;
+}
+.top-left h1 em {
+  font-style: normal;
+  color: var(--sand);
+}
+.top-left h1 span {
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  color: #a8b4ad;
+  margin-left: 8px;
+}
+.top-right {
+  position: absolute;
+  right: 32px;
+  top: 35px;
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+.top-right button {
+  font-size: 10px;
+  background: transparent;
+  border-color: var(--line);
+  padding: 9px 13px;
+}
+#game {
+  width: min(1220px, calc((100dvh - 258px) * 16 / 9));
+  max-width: calc(100vw - 64px);
+  min-width: 300px;
+  margin: 0 auto;
+  padding-top: 98px;
+}
+.course-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.course-header h2 {
+  font-family: Impact, "Arial Narrow", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  margin: 5px 0 0;
+}
+.race-metrics {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font: 700 13px/1.1 monospace;
+  color: #cbd2c4;
+}
+#clock {
+  font-size: 22px;
+  color: var(--sand);
+  font-variant-numeric: tabular-nums;
+}
+#connection {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  border: 1px solid #48554c;
+  padding: 8px 11px;
+  border-radius: 3px;
+}
+#connection[data-status="connected"] {
+  color: #abe19a;
+}
+#viewport {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  border: 1px solid #62604b;
+  border-radius: 8px;
+  background: #413d2f;
+  box-shadow:
+    0 20px 60px #0006,
+    0 0 0 5px #26302b;
+}
+#canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+#labels {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
 }
-
-.corner {
+.world-label {
   position: absolute;
-  color: black;
-  font-size: 10pt;
-  pointer-events: auto;
-}
-
-.corner_top_left {
-  top: 0;
   left: 0;
-}
-
-.corner_top_right {
   top: 0;
-  right: 0;
+  background: #19201be6;
+  border: 1px solid var(--racer);
+  color: #fff5da;
+  padding: 3px 7px;
+  border-radius: 3px;
+  font: 800 10px/1 monospace;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px #0005;
 }
-
-.corner_bottom_left {
-  bottom: 0;
-  left: 0;
+#race-call {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  color: #fff4ce;
+  font:
+    100px/1 Impact,
+    sans-serif;
+  pointer-events: none;
+  text-shadow: 0 6px #543d28;
 }
-
-.corner_bottom_right {
-  right: 0;
-  bottom: 0;
+#graybox {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  background: #132221cc;
+  padding: 5px;
+  font: 9px monospace;
+  color: #f0cc85;
 }
-
-.corner a,
-.corner a:visited {
-  color: black;
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(180deg, #15211d7a, #13201ddb);
+  padding: 22px;
+  backdrop-filter: blur(2px);
 }
-
-.corner_body,
-.corner_title {
-  color: black;
-  font-size: 10pt;
-  line-height: 1.4;
-}
-
-.corner_title {
-  font-weight: 700;
-}
-
-.corner_body {
+#overlay h2 {
+  font-family: Impact, "Arial Narrow", sans-serif;
+  font-size: clamp(28px, 4.5vw, 64px);
   font-weight: 400;
+  letter-spacing: 0.02em;
+  margin: 14px 0 8px;
+  color: #fff0cf;
 }
-
-.settings_option {
-  appearance: none;
+#overlay p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #c8d0c2;
+  max-width: 520px;
+  white-space: pre-line;
+  margin: 0 0 24px;
+}
+#mode-buttons {
+  display: flex;
+  gap: 10px;
+}
+#mode-buttons button {
+  min-width: 150px;
+  font-size: 14px;
+  padding: 17px 20px;
+  text-align: left;
+}
+#mode-buttons span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  margin-top: 7px;
+  opacity: 0.7;
+}
+#overlay-action {
+  margin-top: 10px;
+}
+#race-panel {
+  padding-top: 18px;
+}
+#roster {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  min-height: 58px;
+}
+.idle-note {
+  grid-column: 1/-1;
+  text-align: center;
+  color: #9bac9f;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  padding: 20px;
+}
+.racer-card {
+  display: flex;
+  gap: 10px;
+  background: #26302de0;
+  border: 1px solid #3f4940;
+  border-left: 3px solid var(--racer);
+  border-radius: 3px;
+  padding: 10px 12px;
+  align-items: center;
+  min-width: 0;
+}
+.racer-number {
+  font:
+    28px/1 Impact,
+    sans-serif;
+  color: var(--racer);
+}
+.racer-card strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.035em;
+  white-space: nowrap;
+}
+.racer-card small {
+  display: block;
+  font: 9px/1.2 monospace;
+  color: #aab8aa;
+  margin: 5px 0;
+}
+.racer-card > div {
+  width: 100%;
+  min-width: 0;
+}
+.nitro-bar {
+  height: 3px;
+  background: #445045;
+  margin-top: 8px;
+}
+.nitro-bar i {
+  display: block;
+  height: 100%;
+  background: var(--racer);
+}
+.race-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.race-actions button {
+  padding: 9px 14px;
+  font-size: 11px;
+}
+#notice {
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #b5c2af;
+  margin: 11px 0;
+  min-height: 17px;
+}
+.track-notes {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  color: #7f9284;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  margin: 15px 0 12px;
+}
+.track-notes span:before {
+  content: "◇";
+  color: #b99558;
+  margin-right: 7px;
+}
+.bottom-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0 15px 32px;
+}
+.bottom-left button {
+  padding: 8px 11px;
+  font-size: 10px;
+  background: transparent;
+  border-color: #3e4a40;
+}
+.bottom-left label {
+  font-size: 8px;
+  color: #9bae9e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 6px;
+}
+.bottom-left input {
+  width: 70px;
+  accent-color: var(--sand);
+}
+.bottom-right {
+  position: absolute;
+  bottom: 21px;
+  right: 32px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.bottom-right span {
+  font-size: 8px;
+  color: #728777;
+  letter-spacing: 0.1em;
+}
+.bottom-right b {
+  font: 10px monospace;
+  color: #d5bd86;
+}
+.touch-controls {
+  display: none;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  user-select: none;
+}
+.touch-controls > div {
+  display: flex;
+  gap: 7px;
+}
+.touch-controls button {
+  touch-action: none;
+  min-width: 43px;
+  height: 48px;
+  padding: 8px 10px;
+  font-size: 11px;
+  box-shadow: 0 3px 0 #0c1412;
+}
+.touch-controls .held {
+  background: var(--sand);
+  color: #24291d;
+  border-color: var(--sand);
+}
+#touch-gas {
+  background: #537450;
+}
+#touch-boost {
+  color: var(--sand);
+}
+dialog {
+  background: #202c27;
+  color: #eee5cc;
+  border: 1px solid #66715e;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 580px;
+  width: calc(100vw - 36px);
+  max-height: 85dvh;
+  box-shadow: 0 20px 80px #000a;
+}
+dialog::backdrop {
+  background: #07120bd9;
+  backdrop-filter: blur(5px);
+}
+dialog h2 {
+  font:
+    40px Impact,
+    sans-serif;
+  letter-spacing: 0.025em;
+  font-weight: 400;
+  margin: 12px 0;
+}
+dialog p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #bcc9b8;
+}
+#close-help {
+  float: right;
+  font-size: 20px;
   background: transparent;
   border: 0;
-  color: black;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0;
-  font: inherit;
+  padding: 0 4px;
 }
-
-.settings_option:focus-visible {
-  outline: 2px solid black;
-  outline-offset: 3px;
+.control-guide {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  margin: 22px 0;
+  padding: 18px;
+  background: #15231b;
+}
+.control-guide b {
+  font-size: 9px;
+  color: var(--sand);
+  letter-spacing: 0.1em;
+}
+.control-guide span {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #c8d7bd;
+}
+/* Reserve space for the grid, actions, and the template settings corner. */
+@media (min-width: 751px) {
+  #game {
+    width: min(1220px, calc((100dvh - 370px) * 16 / 9));
+  }
+  .bottom-left {
+    position: fixed;
+    bottom: 0;
+    margin: 0 0 15px 32px;
+  }
+  .bottom-right {
+    position: fixed;
+  }
+}
+@media (pointer: coarse) {
+  .touch-controls {
+    display: flex;
+  }
+}
+@media (max-width: 750px) {
+  .top-left {
+    top: 18px;
+    left: 20px;
+  }
+  .top-left .eyebrow {
+    font-size: 8px;
+  }
+  .top-left h1 {
+    font-size: 23px;
+  }
+  .top-left h1 span {
+    display: none;
+  }
+  .top-right {
+    right: 20px;
+    top: 27px;
+    gap: 12px;
+  }
+  .top-right a {
+    font-size: 9px;
+  }
+  .top-right button {
+    font-size: 8px;
+    padding: 8px;
+  }
+  #game {
+    width: calc(100vw - 32px);
+    max-width: none;
+    min-width: 0;
+    padding-top: 88px;
+  }
+  .course-header h2 {
+    font-size: 21px;
+  }
+  .course-header .eyebrow {
+    font-size: 8px;
+  }
+  .race-metrics {
+    gap: 10px;
+  }
+  #clock {
+    font-size: 17px;
+  }
+  #lap {
+    font-size: 10px;
+  }
+  #connection {
+    font-size: 8px;
+    padding: 6px;
+  }
+  #roster {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+  }
+  .racer-card {
+    padding: 8px;
+  }
+  .racer-number {
+    font-size: 23px;
+  }
+  .racer-card strong {
+    font-size: 10px;
+  }
+  #overlay {
+    padding: 12px;
+  }
+  #overlay .eyebrow {
+    font-size: 7px;
+  }
+  #overlay h2 {
+    margin: 6px 0;
+    font-size: 32px;
+  }
+  #overlay p {
+    font-size: 10px;
+    line-height: 1.45;
+    margin: 0 0 10px;
+    max-width: 290px;
+  }
+  #mode-buttons {
+    gap: 6px;
+  }
+  #mode-buttons button {
+    min-width: 0;
+    padding: 10px 9px;
+    font-size: 10px;
+  }
+  #mode-buttons span {
+    font-size: 6px;
+    margin-top: 4px;
+  }
+  #race-call {
+    font-size: 64px;
+  }
+  .track-notes {
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 6px;
+    margin-bottom: 8px;
+  }
+  .bottom-left {
+    margin: 18px 16px 50px;
+    gap: 6px;
+  }
+  .bottom-right {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    justify-content: center;
+    margin-top: -33px;
+    padding-bottom: 16px;
+  }
+  .bottom-right span {
+    font-size: 7px;
+  }
+  .world-label {
+    font-size: 8px;
+    padding: 2px 4px;
+  }
+  .idle-note {
+    font-size: 8px;
+    line-height: 1.8;
+    padding: 12px;
+  }
+  .touch-controls button {
+    min-width: 36px;
+    height: 43px;
+    padding: 7px;
+    font-size: 9px;
+  }
+}
+@media (max-height: 600px) and (min-width: 751px) {
+  .top-left {
+    top: 8px;
+  }
+  .top-left .eyebrow {
+    display: none;
+  }
+  .top-left h1 {
+    font-size: 20px;
+  }
+  .top-left h1 span {
+    display: none;
+  }
+  .top-right {
+    top: 10px;
+  }
+  #game {
+    padding-top: 46px;
+    width: calc((100dvh - 180px) * 16 / 9);
+    min-width: 0;
+  }
+  .course-header {
+    margin-bottom: 5px;
+  }
+  .course-header h2 {
+    font-size: 15px;
+    margin: 0;
+  }
+  .course-header .eyebrow {
+    display: none;
+  }
+  .race-metrics {
+    gap: 8px;
+  }
+  #clock {
+    font-size: 14px;
+  }
+  #lap {
+    font-size: 9px;
+  }
+  #connection {
+    font-size: 7px;
+    padding: 4px;
+  }
+  #race-panel {
+    padding-top: 8px;
+  }
+  #roster {
+    gap: 4px;
+    min-height: 30px;
+  }
+  .racer-card {
+    padding: 4px;
+    gap: 4px;
+  }
+  .racer-number {
+    font-size: 18px;
+  }
+  .racer-card strong {
+    font-size: 8px;
+  }
+  .racer-card small {
+    font-size: 7px;
+    margin: 2px 0;
+  }
+  .nitro-bar {
+    margin-top: 3px;
+  }
+  .race-actions {
+    margin-top: 6px;
+    gap: 5px;
+  }
+  .race-actions button {
+    padding: 5px 8px;
+    font-size: 9px;
+  }
+  #notice {
+    margin: 5px 0;
+    font-size: 9px;
+    min-height: 14px;
+  }
+  .track-notes {
+    display: none;
+  }
+  .bottom-left {
+    margin-bottom: 7px;
+  }
+  .bottom-right {
+    bottom: 12px;
+  }
+  .bottom-right span {
+    display: none;
+  }
+  #overlay h2 {
+    font-size: 28px;
+    margin: 6px;
+  }
+  #overlay .eyebrow {
+    font-size: 7px;
+  }
+  #overlay p {
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+  #mode-buttons button {
+    min-width: 0;
+    padding: 10px;
+    font-size: 10px;
+  }
+  #mode-buttons span {
+    font-size: 7px;
+  }
+  .idle-note {
+    padding: 8px;
+    font-size: 7px;
+  }
+  #race-call {
+    font-size: 60px;
+  }
+  .touch-controls {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 65px;
+    margin: 0;
+    pointer-events: none;
+  }
+  .touch-controls > div {
+    pointer-events: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .touch-controls button {
+    min-width: 42px;
+    height: 43px;
+    font-size: 9px;
+    padding: 5px;
+  }
+  .world-label {
+    font-size: 7px;
+    padding: 2px;
+  }
+  #graybox {
+    font-size: 6px;
+  }
 }

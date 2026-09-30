@@ -1,0 +1,29 @@
+{
+  "url": "http://127.0.0.1:5189/babylon-lite-super-offroad-clone/?graybox=1",
+  "checks": [
+    {
+      "emulatedTouch": "concurrent gas/steer/boost, release, unchanged camera after resize",
+      "layout": {
+        "height": 390,
+        "scroll": 390,
+        "canvas": {
+          "x": 236.328125,
+          "y": 70,
+          "width": 371.328125,
+          "height": 207.984375,
+          "top": 70,
+          "right": 607.65625,
+          "bottom": 277.984375,
+          "left": 236.328125
+        }
+      },
+      "grayboxFps": 59.99400060208534
+    },
+    {
+      "network": "Client-side WebSocket shim delays input and onmessage by 150 ms each direction and drops every seventh outbound frame; continued authoritative motion and neutral focus release; closed transport and rejoined with fresh identity",
+      "dropped": 6
+    }
+  ],
+  "errors": [],
+  "time": "2026-09-30T10:11:08.140Z"
+}

@@ -1,8 +1,12 @@
 schema: spec-driven
 context: |
-  Repository: project-name.
-  This repository starts as a reusable template with no application
-  implementation, product decisions, or approved technology stack.
+  Repository: babylon-lite-super-offroad-clone. Dust Circuit Rally uses one
+  original quarry circuit, a fixed orthographic camera, 16:9 landscape,
+  Babylon Lite 1.32 WebGPU, and shared Colyseus server/client v0.6.0.
+  Four trucks; online four anonymous humans, local 2–4 and solo practice.
+  Temporary races; original Blender GLBs and editable source required.
+  Static client deploys to GitHub Pages. Commands: npm test, npm run build,
+  npm run test:browser. Node 24 release CI. App root remains project-name.
   Canonical project documentation assets live in project-name/documentation/.
   Before proposing or applying a change, record the project's verified purpose,
   runtime targets, architecture, dependency policy, security constraints, and

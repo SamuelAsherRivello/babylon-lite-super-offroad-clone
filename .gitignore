@@ -2,10 +2,15 @@
 
 # Node and Vite output.
 node_modules/
+.backend/
+.npm-cache/
+.env
+*.blend1
 /project-name/dist/
 
 # Local configuration. Commit examples only, never credentials.
 .env
 .env.*
+!.env.example
 # Playwright CLI output (may contain credentials)
 .playwright-cli/

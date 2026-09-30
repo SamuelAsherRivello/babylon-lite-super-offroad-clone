@@ -1,0 +1,52 @@
+{
+  "target_id": "target-v1",
+  "mode": "generated",
+  "status": "needs-revision",
+  "usable_for": "art-direction with approved-prompt corrections; not literal topology or final geometry",
+  "image": {
+    "path": "target.png",
+    "width": 1672,
+    "height": 941,
+    "format": "PNG",
+    "sha256": "ADB90E34A643230AFB32631FA25BC197FEA94FE8F5072AFC7A7AF8093402E04F"
+  },
+  "prompt": {
+    "path": "prompt.txt",
+    "original_generation_prompt": "known; exact tool submission saved"
+  },
+  "brief": "brief.md",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "provider": null,
+    "model": null,
+    "seed": null
+  },
+  "provenance_note": "Generated once using built-in imagegen tool. Original retained at C:/Users/srive/.codex/generated_images/01a0f190-7de6-7bd1-8f2a-cf35403c97d5/exec-9acae1bd-a85c-4657-838d-5992c436c6ab.png. Generated concept, not actual gameplay or Blender output.",
+  "requested_output": {
+    "aspect_ratio": "16:9",
+    "resolution": null
+  },
+  "references": [],
+  "previous_target_id": null,
+  "task_id": "/root/visual_target",
+  "worker_id": "/root/visual_target",
+  "preserved_parent_features": [
+    "Dust Circuit Rally",
+    "Copper Basin",
+    "landscape 16:9",
+    "fixed elevated oblique orthographic view",
+    "original warm ochre quarry",
+    "four saturated numbered racing trucks",
+    "tabletop jump",
+    "washboards",
+    "mud",
+    "S-bend",
+    "legal shortcut",
+    "low berms and tire barriers",
+    "cool shadows"
+  ],
+  "inspection": {
+    "performed": true,
+    "findings": "Full loop and four main racers readable; extra utility vehicles/machinery and dense cliff decoration exceed scope; pickup off course; edge margin tight; generated topology ambiguous. Brief documents corrections."
+  }
+}

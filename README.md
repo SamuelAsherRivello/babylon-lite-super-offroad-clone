@@ -1,98 +1,314 @@
-<!-- AI: Keep commands rooted at the repository. The Vite application, source, tests, and build output belong in project-name/. -->
 ![Samuel Asher Rivello](project-name/documentation/samuel-asher-rivello-banner.png)
 
-# {project-name}
+# Dust Circuit Rally
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+An original four-truck browser arcade racer with a fixed 16:9 landscape camera, solo practice, shared-screen racing, and online racing on the released shared server.
 
-<!-- AI: Update this project summary when the template is used. -->
-This is the project repo....
+**Development status:** playable graybox; final Blender assets and public game release are pending the official Blender MCP connection. No finished artwork or public game deployment is claimed.
 
-## Images
+## Preview
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+![Actual graybox solo results](project-name/documentation/graybox-solo-results.png)
 
-### Screenshots
-
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
-
-<a href="project-name/documentation/screenshot01.png"><img src="project-name/documentation/screenshot01.png" width="400" alt="Screenshot placeholder" /></a>
-
-## Live Demo
-
-<!-- AI: Keep exactly one bullet containing the demo link and no other visible text. Do not mention releases or add other text here. Keep this one link updated to the latest release URL. -->
-
-- [{live-demo-url}](https://samuelasherrivello.github.io/github-repository-template/)
-
-## Table of Contents
-
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
-
-<!-- AI: Do not include anything above the Table of Contents within the Table of Contents. -->
-1. [Getting Started](#getting-started)
-2. [Project Details](#project-details)
-3. [Credits](#credits)
+This screenshot is the running WebGPU development build, with placeholder geometry explicitly labeled. The generated art target in art-direction/target-v1/ is a design reference, not a gameplay screenshot.
 
 ## Getting Started
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+Use Node 24 and npm. Current Chrome/Edge with WebGPU and hardware acceleration is required. Commands run from the repository root.
 
-<!-- AI: Update this getting-started summary when the template is used. -->
-This is the getting started...
+```sh
+npm ci
+npm run dev -- --port 5188
+npm test
+npm run build
+```
 
-### 🛠 Build Project
+Open http://127.0.0.1:5188/babylon-lite-super-offroad-clone/?graybox=1 for the development course. The normal URL requires the reviewed Blender exports in project-name/public/assets/. It reports a useful asset error until those exist. Solo/local simulation needs no game server; dependency installation still needs network access.
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+For stable browser verification, build, run npm run preview -- --port 5189, and set GAME_URL to the preview URL including ?graybox=1 before npm run test:browser. The browser suite uses installed Google Chrome and emulates keyboard and touch; no physical-controller validation is implied.
 
-1. From the repository root, run `npm install`.
-2. Run `npm run build`.
+## Controls and Rules
 
-### 🛠 Run Project
+| Control | Keyboard P1 | Keyboard P2 | Gamepad |
+| --- | --- | --- | --- |
+| Accelerate | W | Up | RT or A |
+| Steer | A / D | Left / Right | Left stick |
+| Brake / reverse | S | Down | LT |
+| Nitro | Space | Enter | B |
+| Recover | R | Backspace | Y |
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+Touch buttons allow simultaneous steering, gas, and nitro. Local racing starts with two keyboard racers; additional racers require separate gamepads. Shared pause freezes offline simulation. Online pause releases only your controls.
 
-1. From the repository root, run `npm run dev` and open the localhost URL Vite prints.
-2. Run `npm test` to execute the focused source checks.
+Copper Basin runs three laps with four equal trucks, AI fillers, a three-second countdown, a 120-second limit, and up to 15 seconds for remaining finishers. Ordered forward checkpoints validate progress. Recovery returns to the last checkpoint, clears velocity, and costs 1.25 seconds. Nitro starts at three seconds, refills 1.5 seconds up to five; grip lasts five seconds. Pickups respawn after eight seconds and the first authoritative collector wins.
 
-### 🛠 Release Version
-
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
-
-1. Run `npm test` and `npm run build` from the repository root.
-2. Push to `main` to deploy through the GitHub Pages workflow.
-3. Run the **Release** workflow from GitHub Actions to bump the patch version, tag it, and create the GitHub release.
+Online admission uses dust-circuit-rally on the shared server. Up to four humans connect; the lowest occupied seat starts after everyone is ready. Late arrivals watch and enter the next race. Departures become AI for that race. Reconnect creates a fresh participant. In-memory hosting interruptions may reset races; progress is not durable. Mixed local/online parties, accounts, private rooms, championships, and upgrades are excluded.
 
 ## Project Details
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+- Babylon Lite 1.32.0 with WebGPU; Vite 8; DOM UI and original synthesized audio.
+- Shared racing track/simulation imported from the exact released multiplayer client 0.6.0 artifact, not copied rules.
+- Server simulation 30 Hz, snapshots 20 Hz, input 20 Hz; local prediction/reconciliation and remote smoothing.
+- Fixed orthographic camera, whole-course landscape view; narrow layouts preserve 16:9.
+- project-name/ deliberately remains the app root as required by generated AGENTS.md. Repository root is the npm root.
+- Four template corner roles retained: title, links, settings, version. version.txt is the version source.
+- Client OpenSpec change build-dust-circuit-rally remains active until Blender and public delivery acceptance passes.
 
-<!-- AI: Update these project details when the template is used. -->
-This is the project details...
+## Assets
 
-### 📝 Structure
+art-direction/build-assets.py is a prepared Blender-side generator, not evidence of exported assets. It is intended to run through the existing official Blender MCP and create one new owned scene while preserving unrelated work. Editable source will be project-name/artwork/copper-basin.blend. Course, truck variants, centered wheels, props and pickups will be GLBs in project-name/public/assets/.
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+The source uses meters. Game axes are +Y up, X/Z ground; trucks face +Z. Wheels rotate around their X axle; front wheel steering and chassis suspension are runtime effects. Materials use export-compatible PBR colors. Seed 307 controls quarry scatter. Track contract and terrain samples are recorded in art-direction/track-v1.json.
 
-- `project-name/index.html` provides the plain safe-area HTML shell.
-- `project-name/test/` contains focused automated checks for the starter.
-- `project-name/documentation/` contains canonical README images and project
-  documentation assets.
+Final acceptance requires Blender export/reimport, genuine gameplay-camera review against the visual target, actual Babylon Lite import, and measured browser performance. Physical gamepad, real mobile hardware, and network impairment checks are documented separately from automation.
 
-### 📦 AI
+## Verification and Delivery
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+npm test checks independent keyboard/gamepad mappings and the released offline race loop. project-name/test/browser.mjs drives full races using actual keyboard input and records evidence under project-name/documentation/. project-name/test/browser-input-network.mjs verifies concurrent touch and a native WebSocket delay/drop/reconnect simulation. The complete browser suite passed on Node 24.19.0 with no page errors. The two online humans were correctly marked DNF after two laps; both offline humans completed three. Graybox mobile emulation measured approximately 60 FPS. See [delivery status](project-name/documentation/delivery-status.md) for exact verification scope. node project-name/test/assets.mjs requires reviewed real GLB assets before either release or Pages deployment; it intentionally fails while Blender is unavailable.
 
-- `AGENTS.md` contains repository-specific AI agent guidance.
-- `AGENTS_TEMPLATE_USAGE_CHECKLIST.md` contains the template reuse checklist.
-- [openspec](openspec/) contains the repository's specification workflow
-  configuration.
+The shared backend was released and live-verified as [v0.6.0](https://github.com/SamuelAsherRivello/rmc-colyseus-multiplayer-server/releases/tag/v0.6.0), including all 23 regression tests. [Release/deployment run](https://github.com/SamuelAsherRivello/rmc-colyseus-multiplayer-server/actions/runs/36695393931). The exact client artifact is pinned in package.json and package-lock.json.
 
-### 📦 Packages
+Game release uses the checked-in Release workflow: install, tests, reviewed-asset check, build, patch version bump, commit, tag, GitHub release. Pages uses the deploy-pages workflow on main or explicit dispatch. After release, dispatch Pages if the bot version commit did not trigger it; verify actual public gameplay/assets/version before announcing a playable URL. The current game has not been released.
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+## Source Revisions
 
-- [Vite](https://vite.dev/) provides local development and production builds.
+| Source | Revision |
+| --- | --- |
+| GitHub repository template | 497d9e911cfcb04c9d20134ae3001a75d8a8ac15 |
+| Shared skills library | 46e087b |
+| Shared racing implementation | 220b92e |
+| Backend release synchronization | 269e6c8 / v0.6.0 |
 
+The repository was created through GitHub template generation as required by the game-creator skill and AGENTS.md. No source history was cloned into this game. Library skills were imported as real files; OpenSpec skills were regenerated with 1.13.1. Unrelated global skills were not overwritten.
+
+## Original AI Prompt
+
+<details>
+<summary>Approved game prompt and execution follow-ups</summary>
+
+```text
+$rmc-game-creator
+
+Create and deliver “Dust Circuit Rally,” an original browser-based 3D arcade off-road racing game with one polished circuit, four trucks, online multiplayer, local multiplayer, and solo practice.
+
+Prioritize excellent handling, a readable fixed-camera race, cohesive Blender artwork, and reliable multiplayer. Complete and verify this scope before adding optional systems.
+
+PROJECT AND REFERENCES
+
+- Display title: Dust Circuit Rally
+- Game identifier: dust-circuit-rally
+- Intended repository: babylon-lite-super-offroad-clone
+- Inspect the current workspace and remote. Continue the existing project if initialized; otherwise follow the required template workflow while preserving unrelated files.
+- Use Babylon Lite with WebGPU and the rmc-game-creator template, OpenSpec, documentation, verification, and release workflows.
+
+References:
+- Gameplay and presentation: https://en.wikipedia.org/wiki/Super_Off_Road
+- Blender skills: https://github.com/SamuelAsherRivello/ai-skills-blender/
+- Shared multiplayer backend: https://github.com/SamuelAsherRivello/rmc-colyseus-multiplayer-server
+
+Capture the classic arcade experience: the whole dirt circuit visible at once, chunky trucks, vehicle-relative steering, lively sliding and bouncing, short jumps, close contact, limited nitro, and quick rematches.
+
+Create original vehicles, track topology, artwork, sounds, names, and UI. References guide genre and presentation; do not reproduce branded content or an existing track layout.
+
+ONE CIRCUIT AND FIXED CAMERA
+
+Build one original quarry circuit named “Copper Basin.”
+
+Use a fixed orthographic elevated three-quarter camera with clear depth cues. Every legal route and landing must remain visible. Never follow a truck, rotate during play, zoom toward a racer, or shake the camera.
+
+Override the creator skill’s portrait default with a 16:9 landscape play area. Fit the complete course on narrow displays through letterboxing and responsive UI. Keep controls, markers, and scenery from obscuring racing lines.
+
+Begin with an approximately 80 × 60 m arena and tune scale through driving tests. Include:
+- Start/finish straight with four staggered grid positions.
+- Broad sweeping turn, tight hairpin, and S-bend.
+- One tabletop jump with a clearly visible landing.
+- Short washboard section with readable suspension bounce.
+- Shallow mud patch that reduces speed and traction.
+- One legal shortcut with a difficult entry or jump.
+- Forgiving boundaries and safe recovery locations.
+- Restrained quarry scenery outside the racing surface.
+
+Keep passing space approximately three truck widths wide where practical. Distinguish the track, legal shortcut, infield, and out-of-bounds areas clearly. Avoid tunnels, overlapping roads, blind landings, and tall foreground scenery.
+
+ART DIRECTION AND ASSET BRIEF
+
+Use cohesive stylized low-poly 3D:
+- Warm ochre dirt, cool shadows, restrained quarry scenery.
+- Saturated truck colors with large readable numbers.
+- Strong silhouettes, broad material regions, and selective bevels.
+- Dust and skid effects that communicate motion without hiding racers.
+- Simple lighting and shadows that reveal height and contact.
+
+Create these Blender assets:
+1. One original compact off-road truck, initially about 3.2 m long, with four color-and-number variants and equal base performance.
+2. Separate chassis and wheels, front steering pivots, and wheel origins centered on their axles.
+3. Complete terrain/circuit, including jump, washboard, mud, and berms.
+4. Reusable tire stacks, barriers, fencing, three rock variants, start/finish gantry, and one small spectator structure.
+5. Two visually distinct pickups: nitro refill and temporary traction boost.
+
+Use runtime animation for wheel rotation, steering, chassis lean, suspension bounce, and pickup rotation where appropriate. Use lightweight runtime effects for dust, skids, collisions, landings, and pickup collection.
+
+Add original engine, skid, boost, collision, pickup, countdown, and finish sounds. Provide mute and volume controls, and initialize audio after user interaction.
+
+BLENDER WORKFLOW
+
+Discover and read the relevant installed skills by name:
+- blender-setup
+- blender-create-model
+- blender-create-environment
+- blender-procedural-geometry
+- blender-materials
+- blender-light-camera
+- blender-rig-animate
+- blender-uv-bake
+- blender-review-optimize
+- blender-game-export
+- blender-render
+
+Use each when its work is needed. Follow the existing official Blender MCP connection and the skills’ visual-target feedback workflow. Coordinate one scene art direction and evaluate real previews at the final gameplay camera and display size.
+
+Block out and test the course before creating detailed scenery. Develop the truck and one representative track section before expanding the asset kit.
+
+Deliver editable .blend sources, GLB assets where supported by Babylon Lite, necessary textures, and genuine previews. Document scale, axes, pivots, object names, materials, and any animation clips.
+
+Use export-compatible materials. Bake unsupported procedural features when needed. Verify scoped exports through reimport and actual Babylon Lite rendering. Set geometry, texture, and effect budgets from measured browser performance.
+
+TRACK AND SIMULATION CONTRACT
+
+Maintain one versioned track definition shared by server and client:
+- Collision boundaries and drivable regions.
+- Terrain heights, jump geometry, and surface effects.
+- Ordered checkpoints and legal shortcut branches.
+- Grid positions and safe recovery points.
+- AI routes and pickup locations.
+
+Derive or validate gameplay proxies against the Blender course. Ensure visible terrain, collision geometry, checkpoint routes, and server jump behavior agree.
+
+Use lightweight vehicle simulation on the ground plane with explicit height/jump state. Visual wheel and suspension motion follows simulation state. Full rigid-body vehicle physics is outside this initial scope.
+
+HANDLING AND INPUT
+
+Provide responsive arcade controls:
+- Left/right steering relative to truck heading.
+- Accelerate and brake; holding brake near rest permits reverse.
+- Limited nitro activated by a separate action.
+- Controlled sliding with predictable grip recovery.
+- Forgiving truck-to-truck and boundary collisions.
+- Fast recovery from stuck or overturned states.
+
+Nitro refills replenish a bounded supply. Traction boosts last a short defined duration. Specify pickup spawn, collection, respawn, and stacking rules in the design; validate them on the server.
+
+Support keyboard, gamepad, and concurrent touch controls. Allow simultaneous steering, acceleration, and boost. Release inputs safely on focus loss, pointer cancellation, and controller disconnect.
+
+RACE RULES
+
+Each race has four trucks, with labeled AI filling unused positions.
+
+Use three laps, target a 60–90 second race, and enforce a 120-second timeout. Tune track length and handling to meet this pace.
+
+Implement a clear state flow:
+Waiting → Countdown → Racing → Results → Waiting.
+
+At countdown, freeze the roster and starting grid. Late arrivals wait for the next race. Start racers with equal performance, equal nitro, and reset pickup effects.
+
+Validate checkpoint order, direction, shortcut branches, and finish-line crossings. Prevent lap credit from reversing across the line, skipping checkpoints, or using recovery to advance.
+
+Recovery returns a truck to a safe point consistent with its last validated progress, clears unsafe velocity, and applies a short penalty.
+
+After the first finisher, allow a brief finishing window bounded by the race timeout. Rank unfinished racers by validated lap, checkpoint, and progress along the legal route; use a deterministic tie-breaker.
+
+Display positions, laps, nitro, pickup effects, results, and rematch controls. Identify racers using number and color, with a clear indicator for the local player.
+
+Each race is independent. Exclude championships, currency, permanent upgrades, accounts, private room codes, and persistent progression from this version.
+
+PLAY MODES
+
+Online:
+- One human per browser; up to four connected humans.
+- Use the shared server’s existing admission pattern with the isolated dust-circuit-rally game identifier.
+- Provide a simple waiting/ready screen using shared anonymous identities and seat indicators.
+- The lowest occupied human seat may request a start; validate readiness on the server. Transfer that role when the player leaves.
+- Permit one ready human to race against AI.
+- Waiting participants count toward human capacity and receive full/error feedback.
+- Late arrivals may view the current race and enter the next grid.
+- Replace a disconnected racer with AI for the remainder of that race.
+- Reconnect creates a fresh participant who waits for the next race.
+- If all humans leave, clean up the session.
+
+Local:
+- Two to four humans on one shared screen.
+- Support multiple gamepads and two-player keyboard sharing.
+- Provide join/ready controls, distinct indicators, AI fillers, and shared pause.
+- Run without a network connection.
+
+Solo:
+- Offline practice against AI using the same course and handling.
+
+Mixed local-and-online parties are outside this scope.
+
+SHARED MULTIPLAYER SERVER
+
+Follow the rmc-game-creator multiplayer workflow. Inspect the backend’s current AGENTS.md, feature catalog, game registry, shared-client API, source, tests, hosting evidence, and release/deployment workflows.
+
+Reuse existing:
+- Connection status, identity, occupancy, retry, subscriptions, and teardown.
+- Generic game-state snapshots and messaging.
+- Admission, capacity, input-expiration, and game-isolation patterns.
+- Authoritative simulation examples, client packaging, and deployment verification.
+
+Add:
+- Four-human racing room.
+- Authoritative truck simulation, collisions, terrain, jumps, nitro, and pickups.
+- Race phases, readiness, grid formation, lap validation, ranking, and replay.
+- Server-controlled AI and disconnect substitution.
+- Sequenced input and acknowledgments needed for prediction.
+
+Clients send bounded controls and allowed lifecycle requests. The server owns shared outcomes. Reject invalid, stale, excessive, or unauthorized messages; expire missing input.
+
+Use a fixed simulation timestep, client prediction/reconciliation for the controlled truck, and interpolation for remote trucks. Begin with existing server rates and adjust only when measured responsiveness requires it.
+
+Keep racing rules in the racing module. Add broadly reusable capabilities to the shared client through backward-compatible APIs, with regressions for existing consumers.
+
+Respect current hosting limits. An interrupted in-memory race may reset. Show an interrupted-session state and reconnect into a fresh waiting room. Do not imply retained progress or silently replace online play with offline simulation.
+
+Private matchmaking, persistent identity, durable storage, and hosting migration are future work.
+
+IMPLEMENTATION ORDER AND ACCEPTANCE
+
+1. Inspect the project, skills, renderer, and server. Record the design, contracts, assumptions, and acceptance criteria in OpenSpec.
+2. Implement and test the racing server contract. Release and verify backend support before integrating the game client with the exact released shared-client artifact.
+3. Build the graybox circuit and handling. Verify full-course framing, legal routes, race completion, AI, and recovery.
+4. Create and integrate Blender assets. Compare gameplay-camera previews and refine visible shortcomings.
+5. Complete controls, audio, HUD, connection states, results, and replay.
+6. Run applicable checks, production builds, browser verification, releases, and public deployment checks.
+
+Verify:
+- Complete solo and local races with independent simultaneous input.
+- Complete online race with two independent browser sessions.
+- Four-human capacity and fifth-player rejection.
+- Readiness, late arrival, disconnect substitution, fresh reconnect, and replay.
+- Contested pickups, checkpoint exploits, jumps, recovery, and finish ordering.
+- Simulated latency, dropped connections, stale input, and invalid actions.
+- Shared-server game isolation and existing-game regressions.
+- Keyboard, gamepad, touch, resize, audio initialization, and teardown.
+- Full-course visibility and readable racing on desktop and narrow layouts.
+- Actual asset imports, browser performance, console errors, and production paths.
+- Public game client and released backend working together.
+
+When this prompt is executed, complete the scoped server and game releases and GitHub Pages delivery required by rmc-game-creator.
+
+Return the playable URL, repository and release links, editable asset locations, actual gameplay screenshots, measured performance, completed checks, and specific remaining limitations. Distinguish verified behavior from untested behavior.
+```
+
+Execution follow-ups, quoted separately:
+
+```text
+use the prompt and build the game
+use landscape view for the game
+```
+
+These follow-ups authorize execution and retain landscape framing; the attachment's introductory 'prompt only' note was superseded by the build request.
+
+</details>
 
 ## Credits
 
